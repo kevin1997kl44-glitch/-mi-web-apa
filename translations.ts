@@ -80,7 +80,7 @@ export const translations: Record<'es' | 'en', TranslationStrings> = {
     },
     experiences: {
       tag: 'El destino',
-      title: 'Explora el Cabo de la Vela',
+      title: 'El destino',
       lead: 'Ubicado en la mística península de La Guajira, el Cabo de la Vela es uno de los destinos más magnéticos del Caribe colombiano. Este paraje se define por un contraste natural salvaje: dunas de arena dorada que mueren en aguas de un azul profundo, creando un paisaje que parece de otro mundo. Más que un destino visual, es el corazón ancestral del pueblo Wayuu. Visitarlo es sumergirse en una cultura que late a través de su lengua, sus tejidos y su respeto sagrado por la tierra.\n\nMás allá de su mística contemplativa, el Cabo de la Vela se ha consolidado como la meca del kitesurf en el Caribe. Gracias a los vientos alisios del noreste que soplan con una constancia quirúrgica, este destino ofrece una "ventana de viento" excepcionalmente larga que se extiende de diciembre a septiembre. Con intensidades promedio que oscilan entre los 25 y 35 nudos, y ráfagas que raramente bajan de los 15 nudos incluso en temporada baja, las costas guajiras son una pista de velocidad natural sin parangón. Aquí, la configuración geográfica crea condiciones de agua plana ideales tanto para el aprendizaje seguro como para maniobras de freestyle de alto nivel. No es solo un deporte; es una simbiosis perfecta donde el cielo se tiñe con el cromatismo de las velas, convirtiendo cada ráfaga en una oportunidad para desafiar la gravedad sobre un espejo de agua turquesa.',
       ctaButton: 'Descubre el destino',
       reviewsTitle: 'Lo que dicen nuestros visitantes',
@@ -221,7 +221,7 @@ export const translations: Record<'es' | 'en', TranslationStrings> = {
     },
     experiences: {
       tag: 'The destination',
-      title: 'Explore Cabo de la Vela',
+      title: 'The destination',
       lead: 'Located in the mystical La Guajira peninsula, Cabo de la Vela is one of the most magnetic destinations in the Colombian Caribbean. This place is defined by a wild natural contrast: golden sand dunes that meet deep blue waters, creating a landscape that seems out of this world. More than a visual destination, it is the ancestral heart of the Wayuu people. Visiting it is to immerse yourself in a culture that beats through its language, its weavings, and its sacred respect for the land.\n\nBeyond its contemplative mysticism, Cabo de la Vela has established itself as the kitesurfing mecca of the Caribbean. Thanks to the northeast trade winds that blow with surgical consistency, this destination offers an exceptionally long "wind window" that extends from December to September. With average intensities ranging between 25 and 35 knots, and gusts that rarely drop below 15 knots even in the low season, the Guajira coasts are an unparalleled natural speed track. Here, the geographic configuration creates flat water conditions ideal for both safe learning and high-level freestyle maneuvers. It is not just a sport; it is a perfect symbiosis where the sky is tinged with the chromatism of the kites, turning every gust into an opportunity to defy gravity over a mirror of turquoise water.',
       ctaButton: 'Discover the destination',
       reviewsTitle: 'What our visitors say',

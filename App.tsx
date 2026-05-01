@@ -225,11 +225,10 @@ const HomeView = memo(({ t, onNavigate }: { t: TranslationStrings, onNavigate: (
 // --- VISTA HOSPEDAJE ---
 const LodgingView = memo(({ t }: { t: TranslationStrings }) => (
   <div className="view-transition">
-    <SubpageHero 
+    <VideoHero 
       title={t.lodging.title} 
       subtitle={t.lodging.subtitle} 
-      bgImage="https://static.wixstatic.com/media/be13c5_ee83f1d399684f28a09c50de5ed13c61~mv2.jpg"
-      fadeTo="bg-white"
+      videoId="CwqsLegjJrE"
     />
     <section className="py-16 px-6 bg-white">
       <div className="max-w-7xl mx-auto">
