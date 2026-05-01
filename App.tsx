@@ -1,0 +1,835 @@
+
+import React, { useState, useEffect, useMemo, memo, useCallback, useRef } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { X } from 'lucide-react';
+import { translations } from './translations.ts';
+import { Language, TranslationStrings } from './types.ts';
+import { LanguageToggle } from './components/LanguageToggle.tsx';
+import { CookieConsent } from './components/CookieConsent.tsx';
+
+type View = 'inicio' | 'hospedaje' | 'restaurante' | 'experiencias' | 'legal';
+
+// --- COMPONENTE HERO PARA SUBPÁGINAS ---
+const SubpageHero = memo(({ title, subtitle, bgImage, fadeTo = "bg-white" }: { title: string, subtitle: string, bgImage: string, fadeTo?: string }) => (
+  <section className="h-[65vh] md:h-[75vh] relative flex items-center justify-center overflow-hidden bg-[#0b3b52]">
+    <div 
+      className="absolute inset-0 bg-cover bg-center animate-slow-zoom"
+      style={{ backgroundImage: `url('${bgImage}')` }}
+    />
+    
+    <div className="absolute inset-0 bg-gradient-to-b from-[#0b3b52]/60 via-transparent to-black/20" />
+    
+    <div className="relative text-center px-6 z-10 animate-reveal max-w-4xl">
+      <div className="w-12 h-1 bg-[#CBA76B] mx-auto mb-8 rounded-full shadow-lg"></div>
+      <h1 className="text-4xl md:text-7xl font-black text-white mb-6 drop-shadow-[0_8px_30px_rgba(0,0,0,0.5)] tracking-tighter uppercase leading-[0.9]">
+        {title}
+      </h1>
+      <p className="text-lg md:text-2xl text-white/95 max-w-2xl mx-auto font-light tracking-wide italic leading-relaxed drop-shadow-lg">
+        {subtitle}
+      </p>
+    </div>
+    
+    <div className={`absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t ${fadeTo === 'bg-white' ? 'from-white' : 'from-[#f7f0e3]'} via-transparent to-transparent pointer-events-none`} />
+  </section>
+));
+
+// --- COMPONENTE CARRUSEL PARA HABITACIONES ---
+const RoomCarousel = memo(({ images, title }: { images: string[]; title: string }) => {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    if (images.length <= 1) return;
+    const timer = setInterval(() => {
+      setIndex((prev) => (prev + 1) % images.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [images.length]);
+
+  return (
+    <div className="relative w-full h-full overflow-hidden bg-slate-200">
+      <AnimatePresence mode="wait">
+        <motion.img
+          key={index}
+          src={images[index]}
+          alt={title}
+          initial={{ opacity: 0, scale: 1.1 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          transition={{ duration: 1.2, ease: "easeInOut" }}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      </AnimatePresence>
+      
+      {images.length > 1 && (
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2.5 z-20">
+          {images.map((_, i) => (
+            <button 
+              key={i} 
+              onClick={() => setIndex(i)}
+              className={`w-2 h-2 rounded-full transition-all duration-500 shadow-sm ${i === index ? 'bg-white w-6' : 'bg-white/40 hover:bg-white/60'}`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+});
+
+// --- COMPONENTE HERO CON VIDEO ---
+const VideoHero = memo(({ title, subtitle, videoId }: { title: string, subtitle: string, videoId: string, fadeTo?: string }) => {
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && iframeRef.current) {
+        // Enviar comando de reproducción al iframe de YouTube cuando la página vuelve a estar visible
+        iframeRef.current.contentWindow?.postMessage(
+          JSON.stringify({ event: 'command', func: 'playVideo', args: '' }),
+          '*'
+        );
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
+  return (
+    <section className="h-[65vh] md:h-[75vh] relative flex items-center justify-center overflow-hidden bg-black">
+      <div className="absolute inset-0 w-full h-full pointer-events-none bg-black">
+        <iframe
+          ref={iframeRef}
+          className="absolute top-1/2 left-1/2 w-[100vw] h-[56.25vw] min-h-full min-w-[177.77vh] -translate-x-1/2 -translate-y-1/2 scale-[1.05] bg-black"
+          src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${videoId}&rel=0&showinfo=0&modestbranding=1&iv_load_policy=3&enablejsapi=1&playsinline=1&vq=hd1080`}
+          frameBorder="0"
+          allow="autoplay; encrypted-media; picture-in-picture"
+          allowFullScreen
+        ></iframe>
+      </div>
+      
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/40" />
+      
+      <div className="relative text-center px-6 z-10 animate-reveal max-w-4xl">
+        <div className="w-12 h-1 bg-[#CBA76B] mx-auto mb-8 rounded-full shadow-lg"></div>
+        <h1 className="text-4xl md:text-7xl font-black text-white mb-6 drop-shadow-[0_8px_30px_rgba(0,0,0,0.5)] tracking-tighter uppercase leading-[0.9]">
+          {title}
+        </h1>
+        <p className="text-lg md:text-2xl text-white/95 max-w-2xl mx-auto font-light tracking-wide italic leading-relaxed drop-shadow-lg">
+          {subtitle}
+        </p>
+      </div>
+    </section>
+  );
+});
+
+// --- COMPONENTE PREVIEW DE SUBPÁGINAS PARA MOBILE ---
+const MobileSubpagePreviews = memo(({ t, onNavigate }: { t: TranslationStrings, onNavigate: (view: View) => void }) => {
+  const previews = [
+    { id: 'hospedaje' as View, title: t.nav.lodging, img: "https://static.wixstatic.com/media/be13c5_ee83f1d399684f28a09c50de5ed13c61~mv2.jpg" },
+    { id: 'restaurante' as View, title: t.nav.restaurant, img: "https://static.wixstatic.com/media/be13c5_b2ca0fb067644b06a5e49ef05df3f223~mv2.jpg" },
+    { id: 'experiencias' as View, title: t.nav.experiences, img: "https://static.wixstatic.com/media/be13c5_fa5793f6013847e1b92e0fcd39ca7bb5~mv2.png" }
+  ];
+
+  return (
+    <section className="md:hidden py-12 px-6 bg-slate-50">
+      <div className="grid grid-cols-1 gap-6">
+        {previews.map((item) => (
+          <motion.div
+            key={item.id}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => onNavigate(item.id)}
+            className="relative h-48 rounded-[2rem] overflow-hidden shadow-lg group cursor-pointer"
+          >
+            <img 
+              src={item.img} 
+              alt={item.title} 
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0b3b52]/80 via-transparent to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-6">
+              <h3 className="text-white font-black text-xl uppercase tracking-tighter drop-shadow-md">
+                {item.title}
+              </h3>
+              <div className="mt-2 flex items-center gap-2 text-[#CBA76B]">
+                <span className="text-[9px] font-black uppercase tracking-widest">Explorar</span>
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </section>
+  );
+});
+
+// --- VISTA INICIO ---
+const HomeView = memo(({ t, onNavigate }: { t: TranslationStrings, onNavigate: (view: View) => void }) => (
+  <div className="view-transition">
+    <section className="h-[95vh] relative flex items-center justify-center overflow-hidden bg-[#0b3b52]">
+      <div 
+        className="absolute inset-0 bg-cover bg-center animate-slow-zoom"
+        style={{ 
+          backgroundImage: `url('https://static.wixstatic.com/media/be13c5_5ebe13dd73004d7b8c4c673575b610d3~mv2.jpg')` 
+        }}
+      />
+      
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0b3b52]/80 via-transparent to-[#0b3b52]/90" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#0b3b52]/40 via-transparent to-[#0b3b52]/40" />
+      
+      <div className="relative text-center px-6 max-w-5xl z-10 animate-reveal">
+        <h1 className="text-4xl md:text-7xl font-black text-white mb-6 drop-shadow-2xl tracking-tight leading-tight uppercase">
+          {t.hero.title}
+        </h1>
+        <p className="text-base md:text-xl text-white/95 mb-10 max-w-2xl mx-auto font-medium leading-relaxed drop-shadow-lg">
+          {t.hero.subtitle}
+        </p>
+        <div className="flex justify-center">
+          <a 
+            href="https://wa.me/573126306637"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-12 py-4 bg-[#1f7a8c] text-white text-sm font-extrabold rounded-2xl shadow-2xl hover:bg-[#2692a8] transform transition-all hover:-translate-y-1 active:scale-95 uppercase tracking-[0.2em] border border-[#1f7a8c80]"
+          >
+            {t.hero.cta}
+          </a>
+        </div>
+      </div>
+
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent" />
+    </section>
+    
+    <section className="py-24 px-6 bg-white">
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-10">
+          <span className="inline-block px-4 py-1.5 bg-[#f7f0e3] text-[#0b3b52] rounded-full text-[10px] font-black uppercase tracking-[0.3em]">
+            {t.home.welcomeTag}
+          </span>
+        </div>
+        <div className="text-center md:text-left">
+          <p className="text-[#0b3b52] leading-[1.8] text-lg md:text-2xl font-light italic">
+            {t.home.quote}
+          </p>
+          <div className="mt-12 w-20 h-1 bg-[#1f7a8c]/20 rounded-full mx-auto md:mx-0"></div>
+        </div>
+      </div>
+    </section>
+
+    <MobileSubpagePreviews t={t} onNavigate={onNavigate} />
+  </div>
+));
+
+// --- VISTA HOSPEDAJE ---
+const LodgingView = memo(({ t }: { t: TranslationStrings }) => (
+  <div className="view-transition">
+    <SubpageHero 
+      title={t.lodging.title} 
+      subtitle={t.lodging.subtitle} 
+      bgImage="https://static.wixstatic.com/media/be13c5_ee83f1d399684f28a09c50de5ed13c61~mv2.jpg"
+      fadeTo="bg-white"
+    />
+    <section className="py-16 px-6 bg-white">
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-16 max-w-3xl mx-auto animate-reveal">
+           <p className="text-slate-700 leading-relaxed text-lg font-light italic text-center md:text-left whitespace-pre-line">{t.lodging.lead}</p>
+        </div>
+        <div className="flex flex-col gap-16 lg:gap-24">
+          {[
+            { ...t.lodging.rooms.double, images: [
+              "https://static.wixstatic.com/media/1074d5_dbe55e4ddd604ea4b9e39205f4bbd0f3~mv2.jpg",
+              "https://static.wixstatic.com/media/1074d5_f8749b42bd0f4a7585839320a422e183~mv2.jpg",
+              "https://static.wixstatic.com/media/1074d5_ee0fdbd53c9d47528aaeeb3b6652c3cd~mv2.jpg"
+            ]},
+            { ...t.lodging.rooms.enramada, images: ["https://static.wixstatic.com/media/1074d5_c6deb4b0ecbd455abf6ac0389c60b700~mv2.jpeg"] },
+            { ...t.lodging.rooms.multiple, images: [
+              "https://static.wixstatic.com/media/1074d5_7c9432b2d717408e8448c494ef167062~mv2.jpeg",
+              "https://static.wixstatic.com/media/1074d5_a238697c22994371890cbf5838c5ae2b~mv2.jpg",
+              "https://static.wixstatic.com/media/1074d5_58c260bbcc4d468f8066528fc3b589c9~mv2.jpeg"
+            ] }
+          ].map((room, i) => (
+            <div 
+              key={i} 
+              className={`group overflow-hidden rounded-[3rem] bg-slate-50 border border-slate-100 transition-all hover:shadow-2xl animate-reveal stagger-1 max-w-5xl w-full flex flex-col md:flex-row
+                ${i % 2 === 0 ? 'lg:mr-auto' : 'lg:ml-auto md:flex-row-reverse'}
+              `}
+            >
+              <div className="relative h-72 md:h-auto md:w-1/2 overflow-hidden">
+                <RoomCarousel images={room.images} title={room.title} />
+              </div>
+              <div className="p-8 md:p-12 md:w-1/2 flex flex-col justify-center">
+                <h3 className="text-2xl md:text-3xl font-black text-[#0b3b52] mb-4">{room.title}</h3>
+                <p className="text-slate-600 leading-relaxed text-base md:text-lg font-light mb-6">{room.desc}</p>
+                
+                {room.includes && (
+                  <div className="mt-2 pt-6 border-t border-slate-200">
+                    <h4 className="text-[#1f7a8c] font-black text-[10px] tracking-[0.2em] uppercase mb-4">
+                      {room.includesTitle}
+                    </h4>
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4">
+                      {room.includes.map((item, idx) => (
+                        <li key={idx} className="flex items-start gap-2 text-slate-500 text-sm">
+                          <span className="text-[#CBA76B] mt-1 shrink-0">•</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  </div>
+));
+
+// --- VISTA RESTAURANTE ---
+const RestaurantView = memo(({ t }: { t: TranslationStrings }) => {
+  const images = [
+    { src: "https://static.wixstatic.com/media/be13c5_ae1fd1d3645445508b0c25fc8320335a~mv2.jpg", alt: "Pesca del día fresca" },
+    { src: "https://static.wixstatic.com/media/be13c5_d45abe7d3da740ebae28fcd72dea4c02~mv2.jpg", alt: "Platos tradicionales" },
+    { src: "https://static.wixstatic.com/media/be13c5_ea9def875cc1499c94e77c7633e92919~mv2.jpg", alt: "Vista desde nuestra mesa" }
+  ];
+
+  return (
+    <div className="view-transition">
+      <SubpageHero 
+        title={t.restaurant.title} 
+        subtitle={t.restaurant.subtitle} 
+        bgImage="https://static.wixstatic.com/media/be13c5_b2ca0fb067644b06a5e49ef05df3f223~mv2.jpg"
+        fadeTo="bg-[#f7f0e3]"
+      />
+      <section className="py-16 px-6 bg-[#f7f0e3]">
+        <div className="max-w-4xl mx-auto animate-reveal">
+          <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#1f7a8c] mb-6 block text-center">{t.restaurant.tag}</span>
+          <p className="text-slate-700 leading-relaxed text-xl md:text-2xl font-light italic text-center md:text-left">
+            "{t.restaurant.desc}"
+          </p>
+        </div>
+      </section>
+      <section className="pb-24 px-6 bg-[#f7f0e3]">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-reveal stagger-1">
+            {images.map((img, i) => (
+              <div key={i} className="overflow-hidden rounded-[2.5rem] shadow-xl aspect-[4/5] group bg-white">
+                <img 
+                  src={img.src} 
+                  alt={img.alt}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+});
+
+// --- VISTA EXPERIENCIAS ---
+const ExperiencesView = memo(({ t, onSelectExp }: { t: TranslationStrings; onSelectExp: (exp: any) => void }) => {
+  const experiences = [
+    { ...t.experiences.items.puntaGallinas, img: 'https://static.wixstatic.com/media/be13c5_fa5793f6013847e1b92e0fcd39ca7bb5~mv2.png' },
+    { ...t.experiences.items.pilonAzucar, img: 'https://static.wixstatic.com/media/be13c5_f3a9de846dee4298bd09a2134f8c7a3e~mv2.jpg' },
+    { ...t.experiences.items.cuevaDiablo, img: 'https://static.wixstatic.com/media/be13c5_be1ef171c3cf4733adc637f6a1e0dc03~mv2.png' },
+    { ...t.experiences.items.ojoAgua, img: 'https://static.wixstatic.com/media/be13c5_5ca5c936fc874ea1ba50c59d5ceaf470~mv2.png' }
+  ];
+
+  return (
+    <div className="view-transition">
+      <VideoHero 
+        title={t.experiences.title} 
+        subtitle="" 
+        videoId="2nTitFsp148"
+        fadeTo="bg-slate-50"
+      />
+      <section className="py-12 px-6 bg-slate-50 text-center md:text-left animate-reveal">
+        <div className="max-w-4xl mx-auto">
+          <p className="text-slate-700 leading-relaxed text-lg md:text-xl font-light italic mb-8 whitespace-pre-line text-center md:text-left">
+            {t.experiences.lead}
+          </p>
+          <div className="flex flex-col items-center gap-4">
+            <button className="px-8 py-3 bg-[#CBA76B] text-[#0b3b52] text-xs font-black uppercase tracking-[0.2em] rounded-xl shadow-lg cursor-default">
+              {t.experiences.ctaButton}
+            </button>
+            <motion.div 
+              animate={{ y: [0, 10, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="text-[#CBA76B]"
+            >
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+              </svg>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+      <section className="py-24 px-6 bg-slate-50 overflow-hidden">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {experiences.map((item, i) => (
+              <div 
+                key={i} 
+                onClick={() => onSelectExp({ ...item, index: i })}
+                className={`group relative h-[420px] rounded-[3rem] overflow-hidden bg-slate-200 animate-reveal stagger-${i+1} shadow-lg cursor-pointer`}
+              >
+                <div className="absolute inset-0 bg-slate-200 animate-pulse" />
+                <img 
+                  loading="lazy" 
+                  decoding="async" 
+                  src={item.img} 
+                  className="relative w-full h-full object-cover group-hover:scale-110 transition-transform duration-[2s] z-10" 
+                  alt={item.title}
+                  onLoad={(e) => (e.currentTarget.previousElementSibling as HTMLElement).style.display = 'none'}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 z-20" />
+                <div className="absolute bottom-0 left-0 right-0 p-10 z-30">
+                  <p className="text-white font-black text-2xl tracking-tighter uppercase">{item.title}</p>
+                  <div className="mt-4 flex items-center gap-2 text-[#CBA76B] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <span className="text-[10px] font-black uppercase tracking-widest">Ver más</span>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+});
+
+// --- VISTA NOSOTROS ---
+const LegalView = memo(({ t }: { t: TranslationStrings }) => (
+  <div className="view-transition pt-32 pb-24 px-6 bg-[#fdfbf7]">
+    <div className="max-w-4xl mx-auto">
+      <div className="mb-16 animate-reveal text-center md:text-left">
+        <span className="text-[#1f7a8c] font-black text-[10px] tracking-[0.5em] uppercase mb-4 block text-center">{t.aboutUs.tag}</span>
+        <h1 className="text-4xl md:text-6xl font-black text-[#0b3b52] uppercase tracking-tighter leading-none text-center md:text-left">{t.aboutUs.title}</h1>
+        <div className="mt-6 w-12 h-1 bg-[#CBA76B] rounded-full mx-auto md:mx-0"></div>
+      </div>
+      
+      <div className="mb-24 animate-reveal stagger-1">
+        <div className="bg-white p-10 md:p-16 rounded-[2.5rem] shadow-xl shadow-slate-200/40 border border-slate-100 text-center md:text-left">
+          <h2 className="text-2xl md:text-3xl font-black text-[#0b3b52] uppercase tracking-tight mb-8">
+            {t.aboutUs.whoTitle}
+          </h2>
+          <div className="space-y-6 text-slate-600 font-light leading-relaxed text-lg max-w-2xl mx-auto md:mx-0">
+            <p>{t.aboutUs.whoP1}</p>
+            <p>{t.aboutUs.whoP2}</p>
+          </div>
+          <div className="mt-12 pt-10 border-t border-slate-50">
+            <p className="italic text-[#1f7a8c] font-medium text-xl leading-relaxed max-w-xl mx-auto md:mx-0">
+              {t.aboutUs.whoQuote}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-24 animate-reveal stagger-2">
+        <div className="bg-[#0b3b52] p-10 rounded-[2rem] text-white shadow-lg transition-transform hover:-translate-y-1">
+          <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center mb-6">
+            <svg className="w-5 h-5 text-[#CBA76B]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+          </div>
+          <h3 className="text-xl font-black uppercase tracking-tight mb-4">{t.aboutUs.missionTitle}</h3>
+          <p className="text-white/70 font-light leading-relaxed text-base">
+            {t.aboutUs.missionDesc}
+          </p>
+        </div>
+
+        <div className="bg-white p-10 rounded-[2rem] border border-slate-100 shadow-lg transition-transform hover:-translate-y-1">
+          <div className="w-10 h-10 bg-[#f7f0e3] rounded-xl flex items-center justify-center mb-6">
+            <svg className="w-5 h-5 text-[#1f7a8c]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+          </div>
+          <h3 className="text-xl font-black text-[#0b3b52] uppercase tracking-tight mb-4">{t.aboutUs.visionTitle}</h3>
+          <p className="text-slate-500 font-light leading-relaxed text-base">
+            {t.aboutUs.visionDesc}
+          </p>
+        </div>
+      </div>
+
+      <div className="animate-reveal stagger-3">
+        <div className="text-center md:text-left mb-10">
+           <h3 className="text-2xl font-black text-[#0b3b52] uppercase tracking-tight">{t.aboutUs.valuesTitle}</h3>
+           <p className="text-slate-400 text-[10px] mt-2 font-bold tracking-[0.3em] uppercase">{t.aboutUs.valuesSubtitle}</p>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+          {[
+            t.aboutUs.values.integrity,
+            t.aboutUs.values.honesty,
+            t.aboutUs.values.kindness,
+            t.aboutUs.values.commitment,
+            t.aboutUs.values.quality
+          ].map((v, i) => (
+            <div key={i} className="bg-white px-4 py-8 rounded-3xl border border-slate-100 text-center flex flex-col items-center shadow-sm hover:shadow-md transition-all hover:bg-slate-50">
+              <div className="w-1.5 h-1.5 bg-[#CBA76B] rounded-full mb-4"></div>
+              <h4 className="text-[10px] font-black text-[#0b3b52] uppercase tracking-widest mb-2">{v.n}</h4>
+              <p className="text-[8px] text-slate-400 font-bold leading-tight uppercase tracking-tighter">{v.d}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+));
+
+const App: React.FC = () => {
+  const [lang, setLang] = useState<Language>('es');
+  const [currentView, setCurrentView] = useState<View>('inicio');
+  const [scrolled, setScrolled] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [selectedExp, setSelectedExp] = useState<{ title: string; img: string; desc: string; index: number } | null>(null);
+  
+  const t = useMemo(() => translations[lang], [lang]);
+
+  // Manejo de parámetros de URL para Google Ads y navegación directa
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const viewParam = params.get('view') as View;
+    if (viewParam && ['inicio', 'hospedaje', 'restaurante', 'experiencias', 'legal'].includes(viewParam)) {
+      setCurrentView(viewParam);
+    }
+  }, []);
+
+  // Bloqueo de scroll al abrir modal
+  useEffect(() => {
+    if (selectedExp) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [selectedExp]);
+
+  // Actualizar el título de la pestaña (al lado del favicon) según la vista
+  useEffect(() => {
+    const baseTitle = "Apalanchii – Cabo de la Vela";
+    if (currentView === 'inicio') {
+      document.title = baseTitle;
+    } else {
+      const viewLabels: Record<string, string> = {
+        hospedaje: t.nav.lodging,
+        restaurante: t.nav.restaurant,
+        experiencias: t.nav.experiences,
+        legal: t.nav.about
+      };
+      document.title = `${viewLabels[currentView]} | ${baseTitle}`;
+    }
+  }, [currentView, t]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      document.body.classList.add('loaded');
+    }, 100);
+    
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setScrolled(window.scrollY > 40);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      clearTimeout(timer);
+    };
+  }, []);
+
+  const changeView = useCallback((v: View) => {
+    if (v === currentView) return;
+    setCurrentView(v);
+    setIsMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }, [currentView]);
+
+  const navItems: { id: View; label: string }[] = useMemo(() => [
+    { id: 'inicio', label: t.nav.home },
+    { id: 'hospedaje', label: t.nav.lodging },
+    { id: 'restaurante', label: t.nav.restaurant },
+    { id: 'experiencias', label: t.nav.experiences }
+  ], [t]);
+
+  const isTransparentHeader = !scrolled && (currentView === 'inicio');
+
+  return (
+    <div className="min-h-screen bg-white flex flex-col font-sans overflow-x-hidden">
+      <header className={`fixed top-0 left-0 right-0 z-50 glass-header ${
+        isTransparentHeader ? 'bg-transparent py-5' : 'bg-white/90 shadow-md py-2.5'
+      }`}>
+        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+          <button onClick={() => changeView('inicio')} className="active:scale-95 transition-transform">
+            <img 
+              src="https://static.wixstatic.com/media/be13c5_abf5374c2bc448dda014a47f245f7cbc~mv2.png" 
+              alt="Apalanchii" 
+              className="h-7 md:h-8 w-auto transition-all" 
+            />
+          </button>
+          
+          <nav className="hidden md:flex items-center gap-2">
+            {navItems.map(s => (
+              <button 
+                key={s.id} 
+                onClick={() => changeView(s.id)}
+                className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${
+                  currentView === s.id
+                    ? 'bg-[#CBA76B] text-[#0b3b52]'
+                    : `${isTransparentHeader ? 'text-white' : 'text-[#0b3b52]'} hover:bg-[#f7f0e3]`
+                }`}
+              >
+                {s.label}
+              </button>
+            ))}
+          </nav>
+
+          <div className="flex items-center gap-4">
+            <LanguageToggle current={lang} onToggle={setLang} dark={isTransparentHeader} />
+            <button 
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className={`md:hidden p-2 transition-colors ${
+                isTransparentHeader ? 'text-white' : 'text-[#0b3b52]'
+              }`}
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+          </div>
+        </div>
+
+        {isMenuOpen && (
+          <div className="md:hidden absolute top-full left-0 right-0 bg-white/95 backdrop-blur-xl shadow-2xl animate-reveal p-6 space-y-3">
+            {navItems.map(s => (
+              <button 
+                key={s.id} 
+                onClick={() => changeView(s.id)}
+                className={`block w-full text-left px-5 py-4 rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all ${
+                  currentView === s.id ? 'bg-[#0b3b52] text-white shadow-lg scale-[1.02]' : 'text-[#0b3b52] hover:bg-slate-100'
+                }`}
+              >
+                {s.label}
+              </button>
+            ))}
+            <div className="pt-4 border-t border-slate-100">
+              <button 
+                onClick={() => changeView('legal')}
+                className={`block w-full text-left px-5 py-4 rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all ${
+                  currentView === 'legal' ? 'bg-[#CBA76B] text-[#0b3b52]' : 'text-slate-400 hover:text-[#0b3b52] hover:bg-slate-50'
+                }`}
+              >
+                {t.nav.about}
+              </button>
+            </div>
+          </div>
+        )}
+      </header>
+
+      <main className="flex-1">
+        {currentView === 'inicio' && <HomeView t={t} onNavigate={changeView} />}
+        {currentView === 'hospedaje' && <LodgingView t={t} />}
+        {currentView === 'restaurante' && <RestaurantView t={t} />}
+        {currentView === 'experiencias' && <ExperiencesView t={t} onSelectExp={setSelectedExp} />}
+        {currentView === 'legal' && <LegalView t={t} />}
+      </main>
+
+      <footer className="relative mt-12 text-white">
+        <div className="w-full leading-[0] overflow-hidden" aria-hidden="true">
+          <svg viewBox="0 0 1200 60" preserveAspectRatio="none" className="w-full h-10 md:h-16">
+            <defs>
+              <linearGradient id="gradWave" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#0b3b52"/>
+                <stop offset="100%" stopColor="#1f7a8c"/>
+              </linearGradient>
+            </defs>
+            <path d="M0,30 C300,10 900,50 1200,30 L1200,60 L0,60 Z" fill="url(#gradWave)"></path>
+          </svg>
+        </div>
+        
+        <div className="bg-gradient-to-br from-[#0b3b52] to-[#1f7a8c] px-6">
+          <div className="max-w-7xl mx-auto py-12 md:py-16">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 items-start">
+              <div className="flex flex-col items-center md:items-start space-y-6">
+                <button onClick={() => changeView('inicio')} className="active:scale-95 transition-transform">
+                  <img 
+                    src="https://static.wixstatic.com/media/be13c5_abf5374c2bc448dda014a47f245f7cbc~mv2.png" 
+                    alt="Apalanchii" 
+                    className="h-10 w-auto drop-shadow-sm" 
+                  />
+                </button>
+                <div className="space-y-4 text-center md:text-left">
+                  <a 
+                    href="https://maps.app.goo.gl/v7ZpX9fU5zG1jM1n8" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="group inline-flex items-center gap-2"
+                  >
+                    <p className="text-white/60 text-[10px] font-bold uppercase tracking-[0.2em] leading-loose group-hover:text-white transition-colors max-w-[220px]">
+                      {t.footer.address}
+                    </p>
+                    <svg className="w-4 h-4 text-[#CBA76B] group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </a>
+                  <div className="block pt-1">
+                    <button 
+                      onClick={() => changeView('legal')}
+                      className="inline-block text-[9px] text-[#CBA76B] hover:text-white transition-colors uppercase tracking-[0.3em] font-black border-b border-[#CBA76B]/30 pb-1"
+                    >
+                      {t.nav.about}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center space-y-8 w-full">
+                <div className="text-center">
+                  <h4 className="text-white/40 font-black uppercase text-[9px] tracking-[0.5em] leading-none mb-2">
+                    {t.footer.contact}
+                  </h4>
+                </div>
+                <div className="flex flex-col items-start gap-5 w-fit">
+                  <a href="https://wa.me/573126306637" target="_blank" className="group flex items-center gap-4 text-white/80 hover:text-white transition-all">
+                    <span className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center group-hover:bg-[#CBA76B] group-hover:text-[#0b3b52] transition-all border border-white/10 shadow-lg shrink-0">
+                      <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M20.52 3.48A11.9 11.9 0 0 0 12.06 0 11.96 11.96 0 0 0 2.2 18.37L0 24l5.8-2.19a12 12 0 0 0 6.26 1.73h.01c6.63 0 12.03-5.4 12.03-12.05 0-3.22-1.25-6.24-3.58-8.51ZM12.07 21.9h-.01a9.9 9.9 0 0 1-5.05-1.39l-.36-.21-3.45 1.3 1.3-3.36-.23-.35A9.93 9.93 0 0 1 2.1 12c0-5.49 4.47-9.95 9.96-9.95 2.66 0 5.17 1.04 7.05 2.92a9.9 9.9 0 0 1 2.92 7.04c0 5.5-4.47 9.97-9.96 9.97Zm5.7-7.43c-.31-.16-1.84-.91-2.13-1.01-.29-.1-.5-.16-.72.16-.21.31-.83 1.01-1.02 1.22-.19.21-.37.23-.69.08-.31-.16-1.3-.48-2.47-1.51-.91-.8-1.52-1.78-1.7-2.09-.18-.31-.02-.48.14-.64.14-.14.31-.37.46-.55.15-.19.2-.31.31-.52.1-.21.05-.39-.02-.55-.08-.16-.72-1.74-.99-2.38-.26-.63-.53-.54-.72-.55h-.62c-.21 0-.54.08-.82.39-.28.31-1.08 1.05-1.08 2.56 0 1.5 1.1 2.95 1.26 3.16.16.21 2.16 3.3 5.24 4.62.73.32 1.31.5 1.76.64.74.24 1.41.2 1.94.12.59-.09 1.84-.75 2.1-1.47.26-.72.26-1.33.18-1.47-.08-.14-.28-.22-.59-.38Z"/></svg>
+                    </span>
+                    <span className="text-[12px] font-black tracking-[0.1em]">+57 312 630 6637</span>
+                  </a>
+                  <a href="mailto:apalanchii@hotmail.com" className="group flex items-center gap-4 text-white/80 hover:text-white transition-all">
+                    <span className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center group-hover:bg-[#CBA76B] group-hover:text-[#0b3b52] transition-all border border-white/10 shadow-lg shrink-0">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                    </span>
+                    <span className="text-[12px] font-black tracking-[0.1em] lowercase">apalanchii@hotmail.com</span>
+                  </a>
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center md:items-end space-y-8 w-full">
+                <div className="text-center md:text-right">
+                  <h4 className="text-white/40 font-black uppercase text-[9px] tracking-[0.5em] leading-none mb-2">
+                    {t.footer.follow}
+                  </h4>
+                </div>
+                <div className="flex items-center gap-4">
+                  <a 
+                    href="https://www.facebook.com/apalanchii1168/" 
+                    target="_blank" 
+                    className="w-11 h-11 rounded-2xl bg-white/5 flex items-center justify-center hover:bg-[#CBA76B] hover:text-[#0b3b52] transition-all transform hover:-translate-y-1 border border-white/10 shadow-md"
+                    aria-label="Facebook"
+                  >
+                    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M22 12.07C22 6.5 17.52 2 11.94 2 6.36 2 2 6.5 2 12.07c0 5.05 3.69 9.23 8.51 10.03v-7.09H7.9v-2.94h2.61V9.03c0-2.58 1.54-4 3.9-4 1.13 0 2.31.2 2.31.2v2.55h-1.3c-1.28 0-1.68.8-1.68 1.62v1.95h2.85l-.46 2.94h-2.39V22.1C18.31 21.3 22 17.12 22 12.07Z"/></svg>
+                  </a>
+                  <a 
+                    href="https://www.instagram.com/apalanchii_cabodelavela/" 
+                    target="_blank" 
+                    className="w-11 h-11 rounded-2xl bg-white/5 flex items-center justify-center hover:bg-[#CBA76B] hover:text-[#0b3b52] transition-all transform hover:-translate-y-1 border border-white/10 shadow-md"
+                    aria-label="Instagram"
+                  >
+                    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current">
+                      <path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 7.75 2v-8.5A5.75 5.75 0 0 1 7.75 2Zm0 2A3.75 3.75 0 0 0 4 7.75v8.5A3.75 3.75 0 0 0 7.75 20h8.5A3.75 3.75 0 0 0 20 16.25v-8.5A3.75 3.75 0 0 0 16.25 4h-8.5ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.25-2.5a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5Z"/>
+                    </svg>
+                  </a>
+                  <a 
+                    href="https://www.youtube.com/@apalanchii3875" 
+                    target="_blank" 
+                    className="w-11 h-11 rounded-2xl bg-white/5 flex items-center justify-center hover:bg-[#CBA76B] hover:text-[#0b3b52] transition-all transform hover:-translate-y-1 border border-white/10 shadow-md"
+                    aria-label="YouTube"
+                  >
+                    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current">
+                      <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+
+            </div>
+
+            <div className="mt-16 pt-8 border-t border-white/5 text-center">
+              <p className="text-[9px] text-white/30 uppercase tracking-[0.4em] font-medium">
+                © {new Date().getFullYear()} Apalanchii – {t.footer.rights}
+              </p>
+            </div>
+          </div>
+        </div>
+      </footer>
+
+      <AnimatePresence>
+        {selectedExp && (
+          <div className="fixed inset-0 z-[300] flex items-center justify-center md:p-6">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedExp(null)}
+              className="absolute inset-0 bg-[#0b3b52]/90 backdrop-blur-md"
+            />
+            
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.8, y: 40 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8, y: 40, transition: { duration: 0.2, ease: "easeIn" } }}
+              transition={{ 
+                type: 'spring', 
+                damping: 25, 
+                stiffness: 300,
+                mass: 0.5
+              }}
+              className="relative bg-white w-full md:max-w-5xl md:rounded-[3rem] overflow-hidden shadow-2xl flex flex-col md:flex-row h-full md:h-auto md:max-h-[85vh] z-50"
+            >
+              <button 
+                onClick={() => setSelectedExp(null)}
+                className="absolute top-safe-top mt-6 right-6 z-50 p-3 bg-black/20 backdrop-blur-md rounded-full text-white hover:bg-white hover:text-[#0b3b52] transition-all shadow-xl md:bg-white/10"
+                aria-label="Cerrar"
+              >
+                <X size={24} />
+              </button>
+
+              <div className="w-full md:w-3/5 h-[40vh] sm:h-[50vh] md:h-auto relative overflow-hidden shrink-0">
+                <img 
+                  src={selectedExp.img} 
+                  className="w-full h-full object-cover" 
+                  alt={selectedExp.title} 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent md:hidden" />
+              </div>
+
+              <div className="w-full md:w-2/5 p-8 sm:p-10 md:p-12 flex flex-col bg-white overflow-y-auto">
+                <div>
+                  <span className="text-[#1f7a8c] font-black text-[10px] tracking-[0.4em] uppercase mb-4 block">
+                    {t.experiences.tag}
+                  </span>
+                  <h2 className="text-3xl md:text-5xl font-black text-[#0b3b52] uppercase tracking-tighter leading-none mb-6">
+                    {selectedExp.title}
+                  </h2>
+                  <div className="w-12 h-1.5 bg-[#CBA76B] mb-8 rounded-full"></div>
+                  <p className="text-slate-600 font-light leading-relaxed text-lg italic mb-10">
+                    {selectedExp.desc}
+                  </p>
+                  
+                  <button 
+                    onClick={() => setSelectedExp(null)}
+                    className="w-full md:w-auto inline-block px-10 py-5 bg-[#0b3b52] text-white text-[11px] font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-[#1f7a8c] transition-all active:scale-95 shadow-xl"
+                  >
+                    {t.cookie.close}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      <CookieConsent t={t} />
+    </div>
+  );
+};
+
+export default App;
