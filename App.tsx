@@ -129,7 +129,7 @@ const MobileSubpagePreviews = memo(({ t, onNavigate }: { t: TranslationStrings, 
   const previews = [
     { id: 'hospedaje' as View, title: t.nav.lodging, img: "https://static.wixstatic.com/media/be13c5_ee83f1d399684f28a09c50de5ed13c61~mv2.jpg" },
     { id: 'restaurante' as View, title: t.nav.restaurant, img: "https://static.wixstatic.com/media/be13c5_b2ca0fb067644b06a5e49ef05df3f223~mv2.jpg" },
-    { id: 'experiencias' as View, title: t.nav.experiences, img: "https://static.wixstatic.com/media/be13c5_fa5793f6013847e1b92e0fcd39ca7bb5~mv2.png" }
+    { id: 'experiencias' as View, title: t.nav.experiences, img: "https://static.wixstatic.com/media/1074d5_c09922bb51e9490b8b593f7828aa4fda~mv2.jpg" }
   ];
 
   return (
@@ -291,7 +291,7 @@ const RestaurantView = memo(({ t }: { t: TranslationStrings }) => {
   const images = [
     { src: "https://static.wixstatic.com/media/be13c5_ae1fd1d3645445508b0c25fc8320335a~mv2.jpg", alt: "Pesca del día fresca" },
     { src: "https://static.wixstatic.com/media/be13c5_d45abe7d3da740ebae28fcd72dea4c02~mv2.jpg", alt: "Platos tradicionales" },
-    { src: "https://static.wixstatic.com/media/be13c5_ea9def875cc1499c94e77c7633e92919~mv2.jpg", alt: "Vista desde nuestra mesa" }
+    { src: "https://static.wixstatic.com/media/1074d5_db45c32e498b4b55b0e9de648707450e~mv2.jpg", alt: "Vista desde nuestra mesa" }
   ];
 
   return (
@@ -332,7 +332,8 @@ const RestaurantView = memo(({ t }: { t: TranslationStrings }) => {
 // --- VISTA EXPERIENCIAS ---
 const ExperiencesView = memo(({ t, onSelectExp }: { t: TranslationStrings; onSelectExp: (exp: any) => void }) => {
   const experiences = [
-    { ...t.experiences.items.puntaGallinas, img: 'https://static.wixstatic.com/media/be13c5_fa5793f6013847e1b92e0fcd39ca7bb5~mv2.png' },
+    { ...t.experiences.items.kitesurfing, img: 'https://static.wixstatic.com/media/1074d5_c09922bb51e9490b8b593f7828aa4fda~mv2.jpg' },
+    { ...t.experiences.items.kayak, img: 'https://static.wixstatic.com/media/1074d5_b738e7d2bbad47d6b1b5bff782eb8d17~mv2.jpg' },
     { ...t.experiences.items.pilonAzucar, img: 'https://static.wixstatic.com/media/be13c5_f3a9de846dee4298bd09a2134f8c7a3e~mv2.jpg' },
     { ...t.experiences.items.cuevaDiablo, img: 'https://static.wixstatic.com/media/be13c5_be1ef171c3cf4733adc637f6a1e0dc03~mv2.png' },
     { ...t.experiences.items.ojoAgua, img: 'https://static.wixstatic.com/media/be13c5_5ca5c936fc874ea1ba50c59d5ceaf470~mv2.png' }
@@ -369,7 +370,7 @@ const ExperiencesView = memo(({ t, onSelectExp }: { t: TranslationStrings; onSel
       </section>
       <section className="py-24 px-6 bg-slate-50 overflow-hidden">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {experiences.map((item, i) => (
               <div 
                 key={i} 

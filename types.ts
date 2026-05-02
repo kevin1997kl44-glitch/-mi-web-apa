@@ -58,7 +58,8 @@ export interface TranslationStrings {
     reviewsTitle: string;
     cta: string;
     items: {
-      puntaGallinas: { title: string; desc: string };
+      kitesurfing: { title: string; desc: string };
+      kayak: { title: string; desc: string };
       pilonAzucar: { title: string; desc: string };
       cuevaDiablo: { title: string; desc: string };
       ojoAgua: { title: string; desc: string };

@@ -86,9 +86,13 @@ export const translations: Record<'es' | 'en', TranslationStrings> = {
       reviewsTitle: 'Lo que dicen nuestros visitantes',
       cta: 'Solicitar información de tours',
       items: {
-        puntaGallinas: {
-          title: 'Punta Gallinas',
-          desc: 'Punta Gallinas es el punto más septentrional de Suramérica y uno de los destinos más fascinantes de La Guajira. Este lugar fusiona paisajes desérticos, dunas imponentes y el Mar Caribe, creando un contraste espectacular. El territorio es hogar de comunidades Wayuu que preservan con orgullo sus tradiciones en este entorno majestuoso.'
+        kitesurfing: {
+          title: 'Kitesurfing',
+          desc: 'El Cabo de la Vela es reconocido mundialmente como uno de los mejores destinos para la práctica del kitesurfing. Gracias a sus vientos constantes que soplan casi todo el año y sus aguas tranquilas, es el lugar ideal tanto para principiantes como para expertos que buscan perfeccionar sus saltos y maniobras.'
+        },
+        kayak: {
+          title: 'Kayak',
+          desc: 'Deslízate sobre las aguas cristalinas del Cabo de la Vela en kayak. Una experiencia tranquila y diferente para explorar la costa, disfrutar del paisaje marino y descubrir rincones mágicos desde una perspectiva única sobre el mar.'
         },
         pilonAzucar: {
           title: 'Pilón de Azúcar / Cerro Kamaichi',
@@ -227,9 +231,13 @@ export const translations: Record<'es' | 'en', TranslationStrings> = {
       reviewsTitle: 'What our visitors say',
       cta: 'Request tour information',
       items: {
-        puntaGallinas: {
-          title: 'Punta Gallinas',
-          desc: 'Punta Gallinas is the northernmost point of South America and one of the most fascinating destinations in La Guajira. This place blends desert landscapes, imposing dunes, and the Caribbean Sea, creating a spectacular contrast. The territory is home to Wayuu communities who proudly preserve their traditions in this majestic setting.'
+        kitesurfing: {
+          title: 'Kitesurfing',
+          desc: 'Cabo de la Vela is world-renowned as one of the best destinations for kitesurfing. Thanks to its constant winds that blow almost all year round and its calm waters, it is the ideal place for both beginners and experts looking to perfect their jumps and maneuvers.'
+        },
+        kayak: {
+          title: 'Kayak',
+          desc: 'Glide over the crystal-clear waters of Cabo de la Vela in a kayak. A peaceful and different experience to explore the coast, enjoy the marine landscape, and discover magical corners from a unique perspective on the sea.'
         },
         pilonAzucar: {
           title: 'Pilón de Azúcar / Kamaichi Hill',
