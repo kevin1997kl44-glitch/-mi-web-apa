@@ -148,41 +148,46 @@ const MobileSubpagePreviews = memo(({ t, onNavigate }: { t: TranslationStrings, 
   ];
 
   return (
-    <section className="md:hidden py-24 px-6 bg-[#fbf9f4] relative overflow-hidden">
-      {/* Elementos decorativos de fondo */}
-      <div className="absolute top-0 left-0 w-80 h-80 bg-[#CBA76B]/10 rounded-full -translate-x-1/2 -translate-y-1/2 blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[#1f7a8c]/5 rounded-full translate-x-1/3 translate-y-1/3 blur-[120px] pointer-events-none" />
+    <section className="md:hidden py-32 px-6 bg-[#fbf9f4] relative overflow-hidden">
+      {/* Elementos decorativos de fondo más integrados */}
+      <div className="absolute top-0 left-0 w-full h-full opacity-[0.03] pointer-events-none" 
+           style={{ backgroundImage: `url('https://www.transparenttextures.com/patterns/sandpaper.png')` }} />
       
-      <div className="flex flex-col gap-16 relative z-10">
-        {previews.map((item) => (
+      <div className="absolute top-[-10%] left-[-20%] w-[100%] h-[60%] bg-[#CBA76B]/10 rounded-[40%_60%_70%_30%/40%_50%_60%_40%] blur-[80px] rotate-[-15deg] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-20%] w-[100%] h-[60%] bg-[#1f7a8c]/5 rounded-[60%_40%_30%_70%/50%_40%_30%_60%] blur-[100px] rotate-[15deg] pointer-events-none" />
+      
+      <div className="flex flex-col gap-20 relative z-10">
+        {previews.map((item, idx) => (
           <motion.div
             key={item.id}
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.8, delay: idx * 0.1, ease: [0.21, 0.45, 0.32, 0.9] }}
             onClick={() => onNavigate(item.id)}
             className="group cursor-pointer"
           >
-            <div className="relative aspect-[16/10] rounded-[2rem] overflow-hidden mb-6 shadow-2xl shadow-[#0b3b52]/15 group-active:scale-[0.97] transition-all duration-500">
+            <div className="relative aspect-[16/11] rounded-[2.5rem] overflow-hidden mb-8 shadow-[0_30px_60px_-12px_rgba(11,59,82,0.25)] group-active:scale-[0.96] transition-all duration-700">
               <img 
                 src={item.img} 
                 alt={item.title} 
-                className="w-full h-full object-cover transition-transform duration-[3s] group-hover:scale-110"
+                className="w-full h-full object-cover transition-transform duration-[4s] group-hover:scale-110"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0b3b52]/40 via-transparent to-transparent" />
+              <div className="absolute inset-0 border-[0.5px] border-white/20 rounded-[2.5rem] pointer-events-none" />
             </div>
-            <div className="px-2">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-8 h-[2px] bg-[#CBA76B]" />
-                <h3 className="text-[#0b3b52] font-black text-2xl uppercase tracking-tighter leading-none pt-1">
+            <div className="px-4">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-10 h-[1.5px] bg-[#CBA76B]/60" />
+                <h3 className="text-[#0b3b52] font-black text-3xl uppercase tracking-tighter leading-none pt-1">
                   {item.title}
                 </h3>
               </div>
-              <p className="text-slate-600/90 text-[15px] leading-relaxed mb-4 font-light">
+              <p className="text-slate-600/90 text-base leading-relaxed mb-6 font-light">
                 {item.desc}
               </p>
-              <div className="flex items-center gap-2.5 text-[#1f7a8c] font-black text-[10px] uppercase tracking-[0.2em] group-hover:gap-4 transition-all duration-300">
-                <span>Explorar</span>
+              <div className="inline-flex items-center gap-3 text-[#1f7a8c] font-black text-[11px] uppercase tracking-[0.25em] group-hover:gap-5 transition-all duration-500 bg-[#1f7a8c]/5 px-5 py-2.5 rounded-full">
+                <span>{item.id === 'hospedaje' ? 'Reservar' : 'Descubrir'}</span>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
@@ -505,6 +510,82 @@ const LegalView = memo(({ t }: { t: TranslationStrings }) => (
     </div>
   </div>
 ));
+
+// --- COMPONENTE BOTÓN FLOTANTE MINIMALISTA ---
+const MobileFAB = memo(() => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Aparece después de 400px de scroll
+      setIsVisible(window.scrollY > 400);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  return (
+    <AnimatePresence>
+      {isVisible && (
+        <motion.div
+          initial={{ opacity: 0, y: 20, x: '-50%' }}
+          animate={{ opacity: 1, y: 0, x: '-50%' }}
+          exit={{ opacity: 0, y: 20, x: '-50%' }}
+          className="fixed bottom-8 left-1/2 z-[100] md:hidden"
+        >
+          <a
+            href="https://wa.me/573126306637"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 px-8 h-14 bg-[#0b3b52] text-white rounded-full shadow-[0_20px_50px_-10px_rgba(11,59,82,0.5)] border border-white/10 active:scale-95 transition-all duration-200"
+          >
+            <span className="font-black uppercase tracking-[0.2em] text-[10px] pt-0.5">Reservar ahora</span>
+            <div className="w-4 h-[1px] bg-white/30" />
+            <svg className="w-4 h-4 text-[#CBA76B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </a>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+});
+
+// --- COMPONENTE BOTÓN SUBIR (SCROLL TO TOP) ---
+const ScrollToTop = memo(() => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsVisible(window.scrollY > 600);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  return (
+    <AnimatePresence>
+      {isVisible && (
+        <motion.button
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.8 }}
+          onClick={scrollToTop}
+          className="fixed bottom-28 right-6 z-[100] w-10 h-10 bg-white/90 backdrop-blur-md text-[#0b3b52] rounded-full shadow-xl border border-slate-200 flex items-center justify-center active:scale-90 transition-all md:hidden"
+          aria-label="Subir"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 15l7-7 7 7" />
+          </svg>
+        </motion.button>
+      )}
+    </AnimatePresence>
+  );
+});
 
 const App: React.FC = () => {
   const [lang, setLang] = useState<Language>('es');
@@ -857,6 +938,7 @@ const App: React.FC = () => {
       </AnimatePresence>
 
       <CookieConsent t={t} />
+      <ScrollToTop />
     </div>
   );
 };
