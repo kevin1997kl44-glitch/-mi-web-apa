@@ -127,34 +127,63 @@ const VideoHero = memo(({ title, subtitle, videoId }: { title: string, subtitle:
 // --- COMPONENTE PREVIEW DE SUBPÁGINAS PARA MOBILE ---
 const MobileSubpagePreviews = memo(({ t, onNavigate }: { t: TranslationStrings, onNavigate: (view: View) => void }) => {
   const previews = [
-    { id: 'hospedaje' as View, title: t.nav.lodging, img: "https://static.wixstatic.com/media/be13c5_ee83f1d399684f28a09c50de5ed13c61~mv2.jpg" },
-    { id: 'restaurante' as View, title: t.nav.restaurant, img: "https://static.wixstatic.com/media/be13c5_b2ca0fb067644b06a5e49ef05df3f223~mv2.jpg" },
-    { id: 'experiencias' as View, title: t.nav.experiences, img: "https://static.wixstatic.com/media/1074d5_2889bf5c122c4fdcb86d3fa3cd0a962a~mv2.jpg" }
+    { 
+      id: 'hospedaje' as View, 
+      title: t.nav.lodging, 
+      desc: "Descansa frente al mar en cabañas y enramadas tradicionales.",
+      img: "https://static.wixstatic.com/media/be13c5_ee83f1d399684f28a09c50de5ed13c61~mv2.jpg" 
+    },
+    { 
+      id: 'restaurante' as View, 
+      title: t.nav.restaurant, 
+      desc: "Disfruta de la mejor gastronomía local y pesca fresca del día.",
+      img: "https://static.wixstatic.com/media/be13c5_b2ca0fb067644b06a5e49ef05df3f223~mv2.jpg" 
+    },
+    { 
+      id: 'experiencias' as View, 
+      title: t.nav.experiences, 
+      desc: "Explora la magia, el viento y la cultura del Cabo de la Vela.",
+      img: "https://static.wixstatic.com/media/1074d5_2889bf5c122c4fdcb86d3fa3cd0a962a~mv2.jpg" 
+    }
   ];
 
   return (
-    <section className="md:hidden py-12 px-6 bg-slate-50">
-      <div className="grid grid-cols-1 gap-6">
+    <section className="md:hidden py-24 px-6 bg-[#fbf9f4] relative overflow-hidden">
+      {/* Elementos decorativos de fondo */}
+      <div className="absolute top-0 left-0 w-80 h-80 bg-[#CBA76B]/10 rounded-full -translate-x-1/2 -translate-y-1/2 blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[#1f7a8c]/5 rounded-full translate-x-1/3 translate-y-1/3 blur-[120px] pointer-events-none" />
+      
+      <div className="flex flex-col gap-16 relative z-10">
         {previews.map((item) => (
           <motion.div
             key={item.id}
-            whileTap={{ scale: 0.98 }}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
             onClick={() => onNavigate(item.id)}
-            className="relative h-48 rounded-[2rem] overflow-hidden shadow-lg group cursor-pointer"
+            className="group cursor-pointer"
           >
-            <img 
-              src={item.img} 
-              alt={item.title} 
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0b3b52]/80 via-transparent to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-6">
-              <h3 className="text-white font-black text-xl uppercase tracking-tighter drop-shadow-md">
-                {item.title}
-              </h3>
-              <div className="mt-2 flex items-center gap-2 text-[#CBA76B]">
-                <span className="text-[9px] font-black uppercase tracking-widest">Explorar</span>
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="relative aspect-[16/10] rounded-[2rem] overflow-hidden mb-6 shadow-2xl shadow-[#0b3b52]/15 group-active:scale-[0.97] transition-all duration-500">
+              <img 
+                src={item.img} 
+                alt={item.title} 
+                className="w-full h-full object-cover transition-transform duration-[3s] group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+            </div>
+            <div className="px-2">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-8 h-[2px] bg-[#CBA76B]" />
+                <h3 className="text-[#0b3b52] font-black text-2xl uppercase tracking-tighter leading-none pt-1">
+                  {item.title}
+                </h3>
+              </div>
+              <p className="text-slate-600/90 text-[15px] leading-relaxed mb-4 font-light">
+                {item.desc}
+              </p>
+              <div className="flex items-center gap-2.5 text-[#1f7a8c] font-black text-[10px] uppercase tracking-[0.2em] group-hover:gap-4 transition-all duration-300">
+                <span>Explorar</span>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
               </div>
