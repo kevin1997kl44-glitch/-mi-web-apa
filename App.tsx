@@ -129,7 +129,7 @@ const MobileSubpagePreviews = memo(({ t, onNavigate }: { t: TranslationStrings, 
   const previews = [
     { id: 'hospedaje' as View, title: t.nav.lodging, img: "https://static.wixstatic.com/media/be13c5_ee83f1d399684f28a09c50de5ed13c61~mv2.jpg" },
     { id: 'restaurante' as View, title: t.nav.restaurant, img: "https://static.wixstatic.com/media/be13c5_b2ca0fb067644b06a5e49ef05df3f223~mv2.jpg" },
-    { id: 'experiencias' as View, title: t.nav.experiences, img: "https://static.wixstatic.com/media/1074d5_c09922bb51e9490b8b593f7828aa4fda~mv2.jpg" }
+    { id: 'experiencias' as View, title: t.nav.experiences, img: "https://static.wixstatic.com/media/1074d5_2889bf5c122c4fdcb86d3fa3cd0a962a~mv2.jpg" }
   ];
 
   return (
@@ -332,7 +332,7 @@ const RestaurantView = memo(({ t }: { t: TranslationStrings }) => {
 // --- VISTA EXPERIENCIAS ---
 const ExperiencesView = memo(({ t, onSelectExp }: { t: TranslationStrings; onSelectExp: (exp: any) => void }) => {
   const experiences = [
-    { ...t.experiences.items.kitesurfing, img: 'https://static.wixstatic.com/media/1074d5_c09922bb51e9490b8b593f7828aa4fda~mv2.jpg' },
+    { ...t.experiences.items.kitesurfing, img: 'https://static.wixstatic.com/media/1074d5_2889bf5c122c4fdcb86d3fa3cd0a962a~mv2.jpg' },
     { ...t.experiences.items.kayak, img: 'https://static.wixstatic.com/media/1074d5_b738e7d2bbad47d6b1b5bff782eb8d17~mv2.jpg' },
     { ...t.experiences.items.pilonAzucar, img: 'https://static.wixstatic.com/media/be13c5_f3a9de846dee4298bd09a2134f8c7a3e~mv2.jpg' },
     { ...t.experiences.items.cuevaDiablo, img: 'https://static.wixstatic.com/media/be13c5_be1ef171c3cf4733adc637f6a1e0dc03~mv2.png' },
