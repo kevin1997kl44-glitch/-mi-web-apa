@@ -21,6 +21,7 @@ export interface TranslationStrings {
   lodging: {
     title: string;
     subtitle: string;
+    reserve: string;
     lead: string;
     rooms: {
       double: {
@@ -49,6 +50,11 @@ export interface TranslationStrings {
     tag: string;
     desc: string;
     galleryAlt: string;
+    items: {
+      comedor: { title: string; desc: string };
+      langosta: { title: string; desc: string };
+      pargo: { title: string; desc: string };
+    };
   };
   experiences: {
     tag: string;

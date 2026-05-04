@@ -76,13 +76,21 @@ const RoomCarousel = memo(({ images, title }: { images: string[]; title: string 
 });
 
 // --- COMPONENTE HERO CON VIDEO ---
-const VideoHero = memo(({ title, subtitle, videoId }: { title: string, subtitle: string, videoId: string, fadeTo?: string }) => {
+const VideoHero = memo(({ title, subtitle, videoId, fadeTo = "bg-white" }: { title: string, subtitle: string, videoId: string, fadeTo?: string }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible' && iframeRef.current) {
-        // Enviar comando de reproducción al iframe de YouTube cuando la página vuelve a estar visible
+        iframeRef.current.contentWindow?.postMessage(
+          JSON.stringify({ event: 'command', func: 'playVideo', args: '' }),
+          '*'
+        );
+      }
+    };
+
+    const handleWindowFocus = () => {
+      if (iframeRef.current) {
         iframeRef.current.contentWindow?.postMessage(
           JSON.stringify({ event: 'command', func: 'playVideo', args: '' }),
           '*'
@@ -91,35 +99,42 @@ const VideoHero = memo(({ title, subtitle, videoId }: { title: string, subtitle:
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleWindowFocus);
+    
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleWindowFocus);
     };
   }, []);
+
+  const origin = typeof window !== 'undefined' ? window.location.origin : '';
 
   return (
     <section className="h-[65vh] md:h-[75vh] relative flex items-center justify-center overflow-hidden bg-black">
       <div className="absolute inset-0 w-full h-full pointer-events-none bg-black">
         <iframe
           ref={iframeRef}
-          className="absolute top-1/2 left-1/2 w-[100vw] h-[56.25vw] min-h-full min-w-[177.77vh] -translate-x-1/2 -translate-y-1/2 scale-[1.05] bg-black"
-          src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${videoId}&rel=0&showinfo=0&modestbranding=1&iv_load_policy=3&enablejsapi=1&playsinline=1&vq=hd1080`}
+          className="absolute top-1/2 left-1/2 w-[100vw] h-[56.25vw] min-h-full min-w-[177.77vh] -translate-x-1/2 -translate-y-1/2 scale-[1.1] bg-black"
+          src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${videoId}&rel=0&showinfo=0&modestbranding=1&iv_load_policy=3&enablejsapi=1&playsinline=1&vq=hd1080&origin=${origin}`}
           frameBorder="0"
           allow="autoplay; encrypted-media; picture-in-picture"
-          allowFullScreen
+          title={title}
         ></iframe>
       </div>
       
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/40" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-transparent to-black/30" />
       
       <div className="relative text-center px-6 z-10 animate-reveal max-w-4xl">
         <div className="w-12 h-1 bg-[#CBA76B] mx-auto mb-8 rounded-full shadow-lg"></div>
-        <h1 className="text-4xl md:text-7xl font-black text-white mb-6 drop-shadow-[0_8px_30px_rgba(0,0,0,0.5)] tracking-tighter uppercase leading-[0.9]">
+        <h1 className="text-4xl md:text-7xl font-black text-white mb-6 drop-shadow-[0_8px_40px_rgba(0,0,0,0.6)] tracking-tighter uppercase leading-[0.9]">
           {title}
         </h1>
         <p className="text-lg md:text-2xl text-white/95 max-w-2xl mx-auto font-light tracking-wide italic leading-relaxed drop-shadow-lg">
           {subtitle}
         </p>
       </div>
+
+      <div className={`absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t ${fadeTo === 'bg-white' ? 'from-white' : 'from-slate-50'} via-transparent to-transparent pointer-events-none`} />
     </section>
   );
 });
@@ -311,6 +326,17 @@ const LodgingView = memo(({ t }: { t: TranslationStrings }) => (
                     </ul>
                   </div>
                 )}
+                
+                <div className="mt-10 flex justify-center md:justify-start">
+                  <a 
+                    href="https://wa.me/573126306637"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center px-10 py-4 bg-[#0b3b52] text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl shadow-[0_15px_35px_-10px_rgba(11,59,82,0.4)] hover:bg-[#1f7a8c] transition-all transform hover:-translate-y-0.5 active:scale-95"
+                  >
+                    <span>{t.lodging.reserve}</span>
+                  </a>
+                </div>
               </div>
             </div>
           ))}
@@ -322,10 +348,10 @@ const LodgingView = memo(({ t }: { t: TranslationStrings }) => (
 
 // --- VISTA RESTAURANTE ---
 const RestaurantView = memo(({ t }: { t: TranslationStrings }) => {
-  const images = [
-    { src: "https://static.wixstatic.com/media/be13c5_ae1fd1d3645445508b0c25fc8320335a~mv2.jpg", alt: "Pesca del día fresca" },
-    { src: "https://static.wixstatic.com/media/be13c5_d45abe7d3da740ebae28fcd72dea4c02~mv2.jpg", alt: "Platos tradicionales" },
-    { src: "https://static.wixstatic.com/media/1074d5_db45c32e498b4b55b0e9de648707450e~mv2.jpg", alt: "Vista desde nuestra mesa" }
+  const sections = [
+    { ...t.restaurant.items.comedor, img: 'https://static.wixstatic.com/media/be13c5_ae1fd1d3645445508b0c25fc8320335a~mv2.jpg' },
+    { ...t.restaurant.items.langosta, img: 'https://static.wixstatic.com/media/be13c5_d45abe7d3da740ebae28fcd72dea4c02~mv2.jpg' },
+    { ...t.restaurant.items.pargo, img: 'https://static.wixstatic.com/media/1074d5_db45c32e498b4b55b0e9de648707450e~mv2.jpg' }
   ];
 
   return (
@@ -336,27 +362,51 @@ const RestaurantView = memo(({ t }: { t: TranslationStrings }) => {
         bgImage="https://static.wixstatic.com/media/be13c5_b2ca0fb067644b06a5e49ef05df3f223~mv2.jpg"
         fadeTo="bg-[#f7f0e3]"
       />
-      <section className="py-16 px-6 bg-[#f7f0e3]">
-        <div className="max-w-4xl mx-auto animate-reveal">
-          <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#1f7a8c] mb-6 block text-center">{t.restaurant.tag}</span>
-          <p className="text-slate-700 leading-relaxed text-xl md:text-2xl font-light italic text-center md:text-left">
-            "{t.restaurant.desc}"
-          </p>
-        </div>
-      </section>
-      <section className="pb-24 px-6 bg-[#f7f0e3]">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-reveal stagger-1">
-            {images.map((img, i) => (
-              <div key={i} className="overflow-hidden rounded-[2.5rem] shadow-xl aspect-[4/5] group bg-white">
-                <img 
-                  src={img.src} 
-                  alt={img.alt}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-              </div>
-            ))}
+      
+      <section className="py-16 md:py-24 px-6 bg-[#f7f0e3]">
+        <div className="max-w-4xl mx-auto animate-reveal mb-16 md:mb-24">
+          <div className="flex flex-col items-center text-center">
+            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#1f7a8c] mb-8 inline-block px-4 py-1.5 bg-[#1f7a8c]/5 rounded-full">
+              {t.restaurant.tag}
+            </span>
+            <p className="text-[#0b3b52] leading-relaxed text-xl md:text-3xl font-light italic">
+              "{t.restaurant.desc}"
+            </p>
           </div>
+        </div>
+
+        <div className="max-w-6xl mx-auto flex flex-col gap-12 md:gap-32">
+          {sections.map((section, i) => (
+            <div 
+              key={i} 
+              className={`flex flex-col md:flex-row items-center gap-8 md:gap-16 group
+                ${i % 2 === 0 ? '' : 'md:flex-row-reverse'}
+              `}
+            >
+              {/* Contenedor de Imagen */}
+              <div className="w-full md:w-1/2 overflow-hidden rounded-[2.5rem] shadow-2xl relative aspect-[4/3] md:aspect-[3/2]">
+                <img 
+                  src={section.img} 
+                  alt={section.title}
+                  className="w-full h-full object-cover transition-transform duration-[3s] group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-black/10 transition-opacity group-hover:opacity-0" />
+              </div>
+
+              {/* Contenedor de Texto */}
+              <div className="w-full md:w-1/2 flex flex-col justify-center animate-reveal">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-8 h-[2px] bg-[#CBA76B]" />
+                  <h3 className="text-[#0b3b52] font-black text-3xl md:text-5xl uppercase tracking-tighter leading-none pt-2">
+                    {section.title}
+                  </h3>
+                </div>
+                <p className="text-slate-600 text-lg md:text-xl leading-relaxed font-light mt-4">
+                  {section.desc}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
     </div>

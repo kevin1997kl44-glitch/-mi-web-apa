@@ -22,6 +22,7 @@ export const translations: Record<'es' | 'en', TranslationStrings> = {
     lodging: {
       title: 'Tu descanso frente al mar',
       subtitle: '',
+      reserve: 'Reservar',
       lead: 'En nuestro hospedaje encontrarás un espacio acogedor y auténtico donde podrás descansar y disfrutar plenamente del entorno natural del Cabo de la Vela. Te ofrecemos habitaciones cómodas construidas en material tradicional, diseñadas para brindarte frescura y tranquilidad mientras vives la esencia cultural del territorio.\n\nTambién podrás elegir descansar en chinchorros y hamacas ubicados en cabañas típicas, una forma única de vivir una experiencia cercana a las tradiciones locales. Nuestro ambiente familiar y la atención cercana están pensados para que te sientas cómodo desde tu llegada y disfrutes de una estadía agradable en un entorno natural y diferente.',
       rooms: {
         double: {
@@ -31,13 +32,11 @@ export const translations: Record<'es' | 'en', TranslationStrings> = {
           includes: [
             'Baño privado',
             'Ventilador',
-            'Camas según el tipo de habitación',
-            'Espacios construidos en material tradicional yotojoro',
-            'Espacios cómodos para el descanso',
-            'Ambiente fresco y ventilado naturalmente',
-            'Ambiente familiar y tranquilo',
+            'Cama doble o camas sencillas',
+            'Construcción en material tradicional (yotojoro)',
             'Iluminación básica',
-            'Espacio adecuado para pertenencias'
+            'Espacio para pertenencias',
+            'Ambiente fresco e independiente'
           ]
         },
         enramada: {
@@ -45,12 +44,12 @@ export const translations: Record<'es' | 'en', TranslationStrings> = {
           desc: 'La verdadera experiencia Wayuu: descansa en un chinchorro bajo un techo tradicional, arrullado por la brisa marina y el sonido de las olas.',
           includesTitle: '¿Qué incluye el hospedaje en chinchorro?',
           includes: [
-            'Espacio en cabañas típicas',
-            'Acceso a duchas',
-            'Lockers para guardar pertenencias',
-            'Espacios ventilados naturalmente',
-            'Ambiente tradicional y familiar',
-            'Cercanía al mar'
+            'Chinchorro o hamaca tradicional',
+            'Espacio en enramada típica (cabaña abierta)',
+            'Acceso a baños y duchas compartidas',
+            'Lockers de seguridad para pertenencias',
+            'Ventilación natural constante (brisa marina)',
+            'Experiencia cultural auténtica'
           ]
         },
         multiple: {
@@ -60,13 +59,11 @@ export const translations: Record<'es' | 'en', TranslationStrings> = {
           includes: [
             'Baño privado',
             'Ventilador',
-            'Camas según el tipo de habitación',
-            'Espacios construidos en material tradicional yotojoro',
-            'Espacios cómodos para el descanso',
-            'Ambiente fresco y ventilado naturalmente',
-            'Ambiente familiar y tranquilo',
+            'Distribución de camas para grupos o familias',
+            'Espacio amplio y funcional',
+            'Construcción en material tradicional (yotojoro)',
             'Iluminación básica',
-            'Espacio adecuado para pertenencias'
+            'Ambiente familiar y tranquilo'
           ]
         }
       }
@@ -76,7 +73,21 @@ export const translations: Record<'es' | 'en', TranslationStrings> = {
       title: 'Restaurante',
       subtitle: '',
       desc: 'Sabores locales, vista al mar y pesca responsable. Disfruta de una variedad de platos típicos de la región, preparados por manos locales que cuidan cada detalle y la frescura de los ingredientes. Priorizamos los productos de nuestro territorio.',
-      galleryAlt: 'Galería del restaurante'
+      galleryAlt: 'Galería del restaurante',
+      items: {
+        comedor: {
+          title: 'Nuestro Comedor',
+          desc: 'Construido con yotojoro, material del cactus, y envuelto en la arquitectura ancestral wayúu. Es un espacio abierto, lleno de frescura y tranquilidad, donde nos encantaría atenderte con todo el calor de nuestra tierra.'
+        },
+        langosta: {
+          title: 'Langostas al Ajillo',
+          desc: 'Jugosa langosta dorada al ajillo, acompañada de arroz de coco, ensalada fresca y patacones crujientes. Un bocado lleno de sabor, tradición y el espíritu cálido de La Guajira.'
+        },
+        pargo: {
+          title: 'Pargo Rojo',
+          desc: 'El pargo rojo es nuestra estrella del mar: capturado por pescadores locales, es un pescado fresquísimo. Lo servimos con arroz de coco o blanco, ensalada y patacones. Cada bocado es una ola de sabor fresco y auténtico, directo del mar a tu mesa.'
+        }
+      }
     },
     experiences: {
       tag: 'El destino',
@@ -140,8 +151,8 @@ export const translations: Record<'es' | 'en', TranslationStrings> = {
       rights: 'Todos los derechos reservados'
     },
     cookie: {
-      title: 'Tu privacidad es importante',
-      message: 'Utilizamos cookies para garantizar que tengas la mejor experiencia en nuestro sitio web.',
+      title: 'Uso de Cookies',
+      message: 'Utilizamos cookies propias y de terceros para mejorar su experiencia de navegación y realizar tareas de análisis.',
       accept: 'Aceptar',
       reject: 'Rechazar',
       close: 'Cerrar'
@@ -167,6 +178,7 @@ export const translations: Record<'es' | 'en', TranslationStrings> = {
     lodging: {
       title: 'Rest Facing the Sea',
       subtitle: '',
+      reserve: 'Book',
       lead: 'In our lodging, you will find a cozy and authentic space where you can rest and fully enjoy the natural environment of Cabo de la Vela. We offer comfortable rooms built with traditional materials, designed to provide you with freshness and tranquility while you experience the cultural essence of the territory.\n\nYou can also choose to rest in hammocks and chinchorros located in typical cabins, a unique way to live an experience close to local traditions. Our family atmosphere and close attention are designed to make you feel comfortable from your arrival and enjoy a pleasant stay in a natural and different setting.',
       rooms: {
         double: {
@@ -176,13 +188,11 @@ export const translations: Record<'es' | 'en', TranslationStrings> = {
           includes: [
             'Private bathroom',
             'Fan',
-            'Beds according to room type',
-            'Spaces built with traditional yotojoro material',
-            'Comfortable spaces for rest',
-            'Fresh and naturally ventilated environment',
-            'Family and quiet atmosphere',
+            'Double bed or single beds',
+            'Built with traditional material (yotojoro)',
             'Basic lighting',
-            'Adequate space for belongings'
+            'Space for belongings',
+            'Fresh and independent environment'
           ]
         },
         enramada: {
@@ -190,12 +200,12 @@ export const translations: Record<'es' | 'en', TranslationStrings> = {
           desc: 'The true Wayuu experience: rest in a hammock under a traditional roof, lulled by the sea breeze and the sound of the waves.',
           includesTitle: 'What does hammock lodging include?',
           includes: [
-            'Space in typical cabins',
-            'Access to showers',
-            'Lockers for belongings',
-            'Naturally ventilated spaces',
-            'Traditional and family atmosphere',
-            'Proximity to the sea'
+            'Traditional chinchorro or hammock',
+            'Space in a typical "enramada" (open cabin)',
+            'Access to shared bathrooms and showers',
+            'Security lockers for belongings',
+            'Constant natural ventilation (sea breeze)',
+            'Authentic cultural experience'
           ]
         },
         multiple: {
@@ -205,13 +215,11 @@ export const translations: Record<'es' | 'en', TranslationStrings> = {
           includes: [
             'Private bathroom',
             'Fan',
-            'Beds according to room type',
-            'Spaces built with traditional yotojoro material',
-            'Comfortable spaces for rest',
-            'Fresh and naturally ventilated environment',
-            'Family and quiet atmosphere',
+            'Bed layout for groups or families',
+            'Spacious and functional environment',
+            'Built with traditional material (yotojoro)',
             'Basic lighting',
-            'Adequate space for belongings'
+            'Family and peaceful atmosphere'
           ]
         }
       }
@@ -221,7 +229,21 @@ export const translations: Record<'es' | 'en', TranslationStrings> = {
       title: 'Restaurant',
       subtitle: '',
       desc: 'Local flavors, ocean views, and responsible fishing. Enjoy a variety of typical regional dishes, prepared by local hands that care for every detail and the freshness of the ingredients. We prioritize products from our territory.',
-      galleryAlt: 'Restaurant gallery'
+      galleryAlt: 'Restaurant gallery',
+      items: {
+        comedor: {
+          title: 'Our Dining Area',
+          desc: 'Built with yotojoro, a cactus material, and wrapped in ancestral Wayúu architecture. It is an open space, full of freshness and tranquility, where we would love to serve you with all the warmth of our land.'
+        },
+        langosta: {
+          title: 'Garlic Butter Lobster',
+          desc: 'Juicy golden garlic lobster, served with coconut rice, fresh salad, and crispy fried plantains. A bite full of flavor, tradition, and the warm spirit of La Guajira.'
+        },
+        pargo: {
+          title: 'Red Snapper',
+          desc: 'The Red Snapper is our star of the sea: caught by local fishermen, it is incredibly fresh. We serve it with coconut or white rice, salad, and fried plantains. Each bite is a wave of fresh, authentic flavor, straight from the sea to your table.'
+        }
+      }
     },
     experiences: {
       tag: 'The destination',
@@ -285,10 +307,10 @@ export const translations: Record<'es' | 'en', TranslationStrings> = {
       rights: 'All rights reserved'
     },
     cookie: {
-      title: 'Your privacy is important',
-      message: 'We use cookies to ensure you have the best experience on our website.',
+      title: 'Cookie Usage',
+      message: 'We use our own and third-party cookies to improve your browsing experience and perform analysis tasks.',
       accept: 'Accept',
-      reject: 'Decline',
+      reject: 'Reject',
       close: 'Close'
     }
   }
