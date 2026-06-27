@@ -17,6 +17,9 @@ export interface TranslationStrings {
   home: {
     welcomeTag: string;
     quote: string;
+    instagramTag: string;
+    instagramTitle: string;
+    instagramButton: string;
   };
   lodging: {
     title: string;
@@ -63,6 +66,12 @@ export interface TranslationStrings {
     ctaButton: string;
     reviewsTitle: string;
     cta: string;
+    mapTitle: string;
+    mapSubtitle: string;
+    mapLocationDesc: string;
+    mapCta: string;
+    mapDirectionsTitle: string;
+    mapDirectionsText: string;
     items: {
       kitesurfing: { title: string; desc: string };
       kayak: { title: string; desc: string };

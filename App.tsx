@@ -815,7 +815,7 @@ const App: React.FC = () => {
         
         <div className="bg-gradient-to-br from-[#0b3b52] to-[#1f7a8c] px-6">
           <div className="max-w-7xl mx-auto py-12 md:py-16">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 items-start">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-8 items-start">
               <div className="flex flex-col items-center md:items-start space-y-6">
                 <button onClick={() => changeView('inicio')} className="active:scale-95 transition-transform">
                   <img 
@@ -825,20 +825,9 @@ const App: React.FC = () => {
                   />
                 </button>
                 <div className="space-y-4 text-center md:text-left">
-                  <a 
-                    href="https://maps.app.goo.gl/v7ZpX9fU5zG1jM1n8" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="group inline-flex items-center gap-2"
-                  >
-                    <p className="text-white/60 text-[10px] font-bold uppercase tracking-[0.2em] leading-loose group-hover:text-white transition-colors max-w-[220px]">
-                      {t.footer.address}
-                    </p>
-                    <svg className="w-4 h-4 text-[#CBA76B] group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                  </a>
+                  <p className="text-white/60 text-[10px] font-bold uppercase tracking-[0.2em] leading-loose max-w-[220px]">
+                    {t.footer.address}
+                  </p>
                   <div className="block pt-1">
                     <button 
                       onClick={() => changeView('legal')}
@@ -850,13 +839,13 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col items-center space-y-8 w-full">
-                <div className="text-center">
+              <div className="flex flex-col items-center md:items-start space-y-8 w-full">
+                <div className="text-center md:text-left">
                   <h4 className="text-white/40 font-black uppercase text-[9px] tracking-[0.5em] leading-none mb-2">
                     {t.footer.contact}
                   </h4>
                 </div>
-                <div className="flex flex-col items-start gap-5 w-fit">
+                <div className="flex flex-col items-center md:items-start gap-5 w-full">
                   <a href="https://wa.me/573126306637" target="_blank" className="group flex items-center gap-4 text-white/80 hover:text-white transition-all">
                     <span className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center group-hover:bg-[#CBA76B] group-hover:text-[#0b3b52] transition-all border border-white/10 shadow-lg shrink-0">
                       <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M20.52 3.48A11.9 11.9 0 0 0 12.06 0 11.96 11.96 0 0 0 2.2 18.37L0 24l5.8-2.19a12 12 0 0 0 6.26 1.73h.01c6.63 0 12.03-5.4 12.03-12.05 0-3.22-1.25-6.24-3.58-8.51ZM12.07 21.9h-.01a9.9 9.9 0 0 1-5.05-1.39l-.36-.21-3.45 1.3 1.3-3.36-.23-.35A9.93 9.93 0 0 1 2.1 12c0-5.49 4.47-9.95 9.96-9.95 2.66 0 5.17 1.04 7.05 2.92a9.9 9.9 0 0 1 2.92 7.04c0 5.5-4.47 9.97-9.96 9.97Zm5.7-7.43c-.31-.16-1.84-.91-2.13-1.01-.29-.1-.5-.16-.72.16-.21.31-.83 1.01-1.02 1.22-.19.21-.37.23-.69.08-.31-.16-1.3-.48-2.47-1.51-.91-.8-1.52-1.78-1.7-2.09-.18-.31-.02-.48.14-.64.14-.14.31-.37.46-.55.15-.19.2-.31.31-.52.1-.21.05-.39-.02-.55-.08-.16-.72-1.74-.99-2.38-.26-.63-.53-.54-.72-.55h-.62c-.21 0-.54.08-.82.39-.28.31-1.08 1.05-1.08 2.56 0 1.5 1.1 2.95 1.26 3.16.16.21 2.16 3.3 5.24 4.62.73.32 1.31.5 1.76.64.74.24 1.41.2 1.94.12.59-.09 1.84-.75 2.1-1.47.26-.72.26-1.33.18-1.47-.08-.14-.28-.22-.59-.38Z"/></svg>
@@ -872,8 +861,8 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col items-center md:items-end space-y-8 w-full">
-                <div className="text-center md:text-right">
+              <div className="flex flex-col items-center md:items-start space-y-8 w-full">
+                <div className="text-center md:text-left">
                   <h4 className="text-white/40 font-black uppercase text-[9px] tracking-[0.5em] leading-none mb-2">
                     {t.footer.follow}
                   </h4>
@@ -907,6 +896,41 @@ const App: React.FC = () => {
                       <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
                     </svg>
                   </a>
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center md:items-start space-y-4 w-full">
+                <div className="text-center md:text-left">
+                  <h4 className="text-white/40 font-black uppercase text-[9px] tracking-[0.5em] leading-none mb-2">
+                    {t.experiences.mapTitle}
+                  </h4>
+                </div>
+                <div className="w-full h-32 rounded-2xl overflow-hidden relative border border-white/10 shadow-lg bg-slate-100 block group hover:border-[#CBA76B]/40 transition-all duration-300 transform hover:scale-[1.02]">
+                  <iframe
+                    title="Apalanchii Footer Map"
+                    src="https://maps.google.com/maps?q=Apalanchii%2C%20Cabo%20de%20la%20Vela&t=&z=14&ie=UTF8&iwloc=&output=embed"
+                    className="absolute inset-0 w-full h-full border-0 pointer-events-none"
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  ></iframe>
+                  {/* Capa total transparente que captura el click y bloquea la interacción con el iframe */}
+                  <div className="absolute inset-0 bg-[#0b3b52]/0 group-hover:bg-[#0b3b52]/5 transition-all duration-300 flex items-center justify-center z-10">
+                    <div className="bg-white/95 backdrop-blur-sm text-[#0b3b52] px-3.5 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider shadow-md flex items-center gap-1.5 border border-slate-100 transform translate-y-2 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                      <svg className="w-3 h-3 text-[#1f7a8c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      {t.experiences.mapTitle}
+                    </div>
+                  </div>
+                  {/* Enlace absoluto sobre todo el bloque para garantizar redirección sin interferencia */}
+                  <a
+                    href="https://www.google.com/maps/search/?api=1&query=Apalanchii%2C%20Cabo%20de%20la%20Vela"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="absolute inset-0 z-20 cursor-pointer"
+                    aria-label={t.experiences.mapTitle}
+                  />
                 </div>
               </div>
 

@@ -17,7 +17,10 @@ export const translations: Record<'es' | 'en', TranslationStrings> = {
     },
     home: {
       welcomeTag: 'Bienvenidos',
-      quote: '"Bienvenido a Apalanchii, tu refugio frente al mar en el Cabo de la Vela. Aquí todo está diseñado para que encuentres la calma: cabañas y enramadas con identidad Wayuu, habitaciones frescas y un equipo local que te brinda una atención cercana y genuina. Despierta con la brisa, camina por la orilla y al final del día regresa a un espacio acogedor para recargar energías. Estamos a pocos pasos de las experiencias que hacen único al Cabo: atardeceres inolvidables, paseos en lancha y momentos para conectar con lo esencial."'
+      quote: '"Bienvenido a Apalanchii, tu refugio frente al mar en el Cabo de la Vela. Aquí todo está diseñado para que encuentres la calma: cabañas y enramadas con identidad Wayuu, habitaciones frescas y un equipo local que te brinda una atención cercana y genuina. Despierta con la brisa, camina por la orilla y al final del día regresa a un espacio acogedor para recargar energías. Estamos a pocos pasos de las experiencias que hacen único al Cabo: atardeceres inolvidables, paseos en lancha y momentos para conectar con lo esencial."',
+      instagramTag: 'Síguenos en Redes',
+      instagramTitle: 'Sintoniza con el Cabo de la Vela',
+      instagramButton: 'Ver más en Instagram'
     },
     lodging: {
       title: 'Tu descanso frente al mar',
@@ -96,6 +99,12 @@ export const translations: Record<'es' | 'en', TranslationStrings> = {
       ctaButton: 'Descubre el destino',
       reviewsTitle: 'Lo que dicen nuestros visitantes',
       cta: 'Solicitar información de tours',
+      mapTitle: 'Ubicación en el Cabo',
+      mapSubtitle: 'Cómo llegar a Apalanchii',
+      mapLocationDesc: 'Nos encontramos ubicados frente al mar, en la playa principal de rancherías del Cabo de la Vela. Un oasis de calma ideal para descansar, disfrutar de la gastronomía y practicar kitesurf.',
+      mapCta: 'Ver en Google Maps',
+      mapDirectionsTitle: 'Cómo llegar a nuestro refugio',
+      mapDirectionsText: 'El Cabo de la Vela se encuentra en la alta Guajira. Tradicionalmente puedes llegar en vehículos 4x4 o tours autorizados desde Riohacha o Uribia. El trayecto dura unas 2 a 3 horas cruzando hermosos parajes de desierto, salinas e impresionantes contrastes naturales.',
       items: {
         kitesurfing: {
           title: 'Kitesurfing',
@@ -173,7 +182,10 @@ export const translations: Record<'es' | 'en', TranslationStrings> = {
     },
     home: {
       welcomeTag: 'Welcome',
-      quote: '"Welcome to Apalanchii, your seaside sanctuary in Cabo de la Vela. Everything here is designed for you to find peace: cabins and enramadas with Wayuu identity, fresh rooms, and a local team providing warm and genuine service. Wake up to the breeze, walk along the shore, and at the end of the day return to a cozy space to recharge. We are just steps away from the experiences that make the Cabo unique: unforgettable sunsets, boat trips, and moments to reconnect with the essential."'
+      quote: '"Welcome to Apalanchii, your seaside sanctuary in Cabo de la Vela. Everything here is designed for you to find peace: cabins and enramadas with Wayuu identity, fresh rooms, and a local team providing warm and genuine service. Wake up to the breeze, walk along the shore, and at the end of the day return to a cozy space to recharge. We are just steps away from the experiences that make the Cabo unique: unforgettable sunsets, boat trips, and moments to reconnect with the essential."',
+      instagramTag: 'Follow Our Journey',
+      instagramTitle: 'Connect with our Sanctuary',
+      instagramButton: 'View more on Instagram'
     },
     lodging: {
       title: 'Rest Facing the Sea',
@@ -252,6 +264,12 @@ export const translations: Record<'es' | 'en', TranslationStrings> = {
       ctaButton: 'Discover the destination',
       reviewsTitle: 'What our visitors say',
       cta: 'Request tour information',
+      mapTitle: 'Location in the Cape',
+      mapSubtitle: 'How to Get to Apalanchii',
+      mapLocationDesc: 'We are located right in front of the sea, on the main beach of rancherías in Cabo de la Vela. A peaceful oasis ideal for resting, enjoying local cuisine, and kitesurfing.',
+      mapCta: 'View on Google Maps',
+      mapDirectionsTitle: 'How to reach our sanctuary',
+      mapDirectionsText: 'Cabo de la Vela is located in the Upper Guajira. You can easily reach us via 4x4 transport or authorized tours from Riohacha or Uribia. The journey is an unforgettable 2 to 3 hour trip traversing magnificent desert vistas and beautiful salt flats.',
       items: {
         kitesurfing: {
           title: 'Kitesurfing',
