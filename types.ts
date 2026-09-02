@@ -20,6 +20,13 @@ export interface TranslationStrings {
     instagramTag: string;
     instagramTitle: string;
     instagramButton: string;
+    previewsTag: string;
+    previewsTitle: string;
+    previews: {
+      lodging: { badge: string; tag: string; desc: string; cta: string };
+      restaurant: { badge: string; tag: string; desc: string; cta: string };
+      experiences: { badge: string; tag: string; desc: string; cta: string };
+    };
   };
   lodging: {
     title: string;
@@ -66,6 +73,9 @@ export interface TranslationStrings {
     ctaButton: string;
     reviewsTitle: string;
     cta: string;
+    viewMore: string;
+    bookWhatsAppPrompt: string;
+    mapSatellite: string;
     mapTitle: string;
     mapSubtitle: string;
     mapLocationDesc: string;
@@ -113,6 +123,16 @@ export interface TranslationStrings {
     accept: string;
     reject: string;
     close: string;
+  };
+  common: {
+    prevPhoto: string;
+    nextPhoto: string;
+    openMenu: string;
+    closeMenu: string;
+    scrollToTop: string;
+    viewImage: string;
+    close: string;
+    reserve: string;
   };
   assistant: {
     greeting: string;

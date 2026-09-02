@@ -20,7 +20,29 @@ export const translations: Record<'es' | 'en', TranslationStrings> = {
       quote: '"Bienvenido a Apalanchii, tu refugio frente al mar en el Cabo de la Vela. Aquí todo está diseñado para que encuentres la calma: cabañas y enramadas con identidad Wayuu, habitaciones frescas y un equipo local que te brinda una atención cercana y genuina. Despierta con la brisa, camina por la orilla y al final del día regresa a un espacio acogedor para recargar energías. Estamos a pocos pasos de las experiencias que hacen único al Cabo: atardeceres inolvidables, paseos en lancha y momentos para conectar con lo esencial."',
       instagramTag: 'Síguenos en Redes',
       instagramTitle: 'Sintoniza con el Cabo de la Vela',
-      instagramButton: 'Ver más en Instagram'
+      instagramButton: 'Ver más en Instagram',
+      previewsTag: 'Experiencias Apalanchii',
+      previewsTitle: 'Tu refugio en el Cabo',
+      previews: {
+        lodging: {
+          badge: 'Hospedaje',
+          tag: 'Frente al Mar Caribe',
+          desc: 'Cabañas tradicionales en yotojoro y chinchorros típicos arrullados por la brisa marina del Cabo.',
+          cta: 'Ver Cabañas & Habitaciones'
+        },
+        restaurant: {
+          badge: 'Restaurante',
+          tag: 'Pesca Fresca & Tradición',
+          desc: 'Langostas al ajillo, pargo rojo frito, arroz de coco y sabores con el calor de nuestra tierra Wayuu.',
+          cta: 'Conocer Nuestro Comedor'
+        },
+        experiences: {
+          badge: 'El Destino',
+          tag: 'Aventura & Viento',
+          desc: 'Kitesurf en la meca del viento, dunas doradas, Pilón de Azúcar y los atardeceres más mágicos.',
+          cta: 'Explorar Atractivos'
+        }
+      }
     },
     lodging: {
       title: 'Tu descanso frente al mar',
@@ -99,6 +121,9 @@ export const translations: Record<'es' | 'en', TranslationStrings> = {
       ctaButton: 'Descubre el destino',
       reviewsTitle: 'Lo que dicen nuestros visitantes',
       cta: 'Solicitar información de tours',
+      viewMore: 'Ver más detalles',
+      bookWhatsAppPrompt: 'Hola, me interesa reservar o recibir información sobre la experiencia: ',
+      mapSatellite: 'Satélite',
       mapTitle: 'Ubicación en el Cabo',
       mapSubtitle: 'Cómo llegar a Apalanchii',
       mapLocationDesc: 'Nos encontramos ubicados frente al mar, en la playa principal de rancherías del Cabo de la Vela. Un oasis de calma ideal para descansar, disfrutar de la gastronomía y practicar kitesurf.',
@@ -165,6 +190,16 @@ export const translations: Record<'es' | 'en', TranslationStrings> = {
       accept: 'Aceptar',
       reject: 'Rechazar',
       close: 'Cerrar'
+    },
+    common: {
+      prevPhoto: 'Foto anterior',
+      nextPhoto: 'Foto siguiente',
+      openMenu: 'Abrir menú',
+      closeMenu: 'Cerrar menú',
+      scrollToTop: 'Subir al inicio',
+      viewImage: 'Ver imagen',
+      close: 'Cerrar',
+      reserve: 'Reservar'
     }
   },
   en: {
@@ -185,7 +220,29 @@ export const translations: Record<'es' | 'en', TranslationStrings> = {
       quote: '"Welcome to Apalanchii, your seaside sanctuary in Cabo de la Vela. Everything here is designed for you to find peace: cabins and enramadas with Wayuu identity, fresh rooms, and a local team providing warm and genuine service. Wake up to the breeze, walk along the shore, and at the end of the day return to a cozy space to recharge. We are just steps away from the experiences that make the Cabo unique: unforgettable sunsets, boat trips, and moments to reconnect with the essential."',
       instagramTag: 'Follow Our Journey',
       instagramTitle: 'Connect with our Sanctuary',
-      instagramButton: 'View more on Instagram'
+      instagramButton: 'View more on Instagram',
+      previewsTag: 'Apalanchii Experiences',
+      previewsTitle: 'Your Sanctuary in the Cape',
+      previews: {
+        lodging: {
+          badge: 'Lodging',
+          tag: 'Facing the Caribbean Sea',
+          desc: 'Traditional cabins built in yotojoro and classic hammocks lulled by the sea breeze of the Cape.',
+          cta: 'View Cabins & Rooms'
+        },
+        restaurant: {
+          badge: 'Restaurant',
+          tag: 'Fresh Catch & Tradition',
+          desc: 'Garlic butter lobster, fried red snapper, coconut rice, and authentic flavors with the warmth of our Wayuu land.',
+          cta: 'Discover Our Dining Area'
+        },
+        experiences: {
+          badge: 'The Destination',
+          tag: 'Adventure & Wind',
+          desc: 'Kitesurfing in the wind mecca, golden sand dunes, Kamaichi Hill (Pilón de Azúcar), and magical sunsets.',
+          cta: 'Explore Attractions'
+        }
+      }
     },
     lodging: {
       title: 'Rest Facing the Sea',
@@ -264,6 +321,9 @@ export const translations: Record<'es' | 'en', TranslationStrings> = {
       ctaButton: 'Discover the destination',
       reviewsTitle: 'What our visitors say',
       cta: 'Request tour information',
+      viewMore: 'View details',
+      bookWhatsAppPrompt: 'Hello, I am interested in booking or receiving information about the experience: ',
+      mapSatellite: 'Satellite',
       mapTitle: 'Location in the Cape',
       mapSubtitle: 'How to Get to Apalanchii',
       mapLocationDesc: 'We are located right in front of the sea, on the main beach of rancherías in Cabo de la Vela. A peaceful oasis ideal for resting, enjoying local cuisine, and kitesurfing.',
@@ -330,6 +390,16 @@ export const translations: Record<'es' | 'en', TranslationStrings> = {
       accept: 'Accept',
       reject: 'Reject',
       close: 'Close'
+    },
+    common: {
+      prevPhoto: 'Previous photo',
+      nextPhoto: 'Next photo',
+      openMenu: 'Open menu',
+      closeMenu: 'Close menu',
+      scrollToTop: 'Scroll to top',
+      viewImage: 'View image',
+      close: 'Close',
+      reserve: 'Book'
     }
   }
 };

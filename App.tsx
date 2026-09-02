@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useMemo, memo, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X } from 'lucide-react';
+import { X, Menu, ChevronLeft, ChevronRight, MessageCircle, MapPin, ArrowRight } from 'lucide-react';
 import { translations } from './translations.ts';
 import { Language, TranslationStrings } from './types.ts';
 import { LanguageToggle } from './components/LanguageToggle.tsx';
@@ -11,30 +11,31 @@ type View = 'inicio' | 'hospedaje' | 'restaurante' | 'experiencias' | 'legal';
 
 // --- COMPONENTE HERO PARA SUBPÁGINAS ---
 const SubpageHero = memo(({ title, subtitle, bgImage, fadeTo = "bg-white" }: { title: string, subtitle: string, bgImage: string, fadeTo?: string }) => (
-  <section className="h-[65vh] md:h-[75vh] relative flex items-center justify-center overflow-hidden bg-[#0b3b52]">
+  <section className="h-[50vh] sm:h-[60vh] md:h-[75vh] relative flex items-center justify-center overflow-hidden bg-[#0b3b52]">
     <div 
       className="absolute inset-0 bg-cover bg-center animate-slow-zoom"
       style={{ backgroundImage: `url('${bgImage}')` }}
     />
     
-    <div className="absolute inset-0 bg-gradient-to-b from-[#0b3b52]/60 via-transparent to-black/20" />
+    <div className="absolute inset-0 bg-gradient-to-b from-[#0b3b52]/70 via-[#0b3b52]/30 to-black/40" />
     
-    <div className="relative text-center px-6 z-10 animate-reveal max-w-4xl">
-      <div className="w-12 h-1 bg-[#CBA76B] mx-auto mb-8 rounded-full shadow-lg"></div>
-      <h1 className="text-4xl md:text-7xl font-black text-white mb-6 drop-shadow-[0_8px_30px_rgba(0,0,0,0.5)] tracking-tighter uppercase leading-[0.9]">
+    <div className="relative text-center px-5 sm:px-6 z-10 animate-reveal max-w-4xl">
+      <h1 className="text-3xl sm:text-5xl md:text-7xl font-black text-white mb-3 sm:mb-6 drop-shadow-[0_8px_30px_rgba(0,0,0,0.5)] tracking-tighter uppercase leading-[0.95]">
         {title}
       </h1>
-      <p className="text-lg md:text-2xl text-white/95 max-w-2xl mx-auto font-light tracking-wide italic leading-relaxed drop-shadow-lg">
-        {subtitle}
-      </p>
+      {subtitle && (
+        <p className="text-sm sm:text-lg md:text-2xl text-white/95 max-w-2xl mx-auto font-light tracking-wide italic leading-relaxed drop-shadow-lg">
+          {subtitle}
+        </p>
+      )}
     </div>
     
-    <div className={`absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t ${fadeTo === 'bg-white' ? 'from-white' : 'from-[#f7f0e3]'} via-transparent to-transparent pointer-events-none`} />
+    <div className={`absolute bottom-0 left-0 right-0 h-32 md:h-48 bg-gradient-to-t ${fadeTo === 'bg-white' ? 'from-white' : 'from-[#f7f0e3]'} via-transparent to-transparent pointer-events-none`} />
   </section>
 ));
 
 // --- COMPONENTE CARRUSEL PARA HABITACIONES ---
-const RoomCarousel = memo(({ images, title }: { images: string[]; title: string }) => {
+const RoomCarousel = memo(({ images, title, t }: { images: string[]; title: string; t: TranslationStrings }) => {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -45,31 +46,62 @@ const RoomCarousel = memo(({ images, title }: { images: string[]; title: string 
     return () => clearInterval(timer);
   }, [images.length]);
 
+  const prevImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  const nextImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIndex((prev) => (prev + 1) % images.length);
+  };
+
   return (
-    <div className="relative w-full h-full overflow-hidden bg-slate-200">
+    <div className="relative w-full h-full overflow-hidden bg-slate-200 group">
       <AnimatePresence mode="wait">
         <motion.img
           key={index}
           src={images[index]}
           alt={title}
-          initial={{ opacity: 0, scale: 1.1 }}
+          initial={{ opacity: 0, scale: 1.08 }}
           animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.95 }}
-          transition={{ duration: 1.2, ease: "easeInOut" }}
+          exit={{ opacity: 0, scale: 0.96 }}
+          transition={{ duration: 0.8, ease: "easeInOut" }}
           className="absolute inset-0 w-full h-full object-cover"
         />
       </AnimatePresence>
       
       {images.length > 1 && (
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2.5 z-20">
-          {images.map((_, i) => (
-            <button 
-              key={i} 
-              onClick={() => setIndex(i)}
-              className={`w-2 h-2 rounded-full transition-all duration-500 shadow-sm ${i === index ? 'bg-white w-6' : 'bg-white/40 hover:bg-white/60'}`}
-            />
-          ))}
-        </div>
+        <>
+          <button
+            onClick={prevImage}
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm text-white flex items-center justify-center z-20 hover:bg-black/60 active:scale-90 transition-all shadow-md"
+            aria-label={t.common.prevPhoto}
+          >
+            <ChevronLeft size={18} />
+          </button>
+          <button
+            onClick={nextImage}
+            className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm text-white flex items-center justify-center z-20 hover:bg-black/60 active:scale-90 transition-all shadow-md"
+            aria-label={t.common.nextPhoto}
+          >
+            <ChevronRight size={18} />
+          </button>
+
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20 px-3 py-1.5 rounded-full bg-black/25 backdrop-blur-sm">
+            {images.map((_, i) => (
+              <button 
+                key={i} 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIndex(i);
+                }}
+                className={`h-1.5 rounded-full transition-all duration-300 ${i === index ? 'bg-white w-5' : 'bg-white/50 w-1.5'}`}
+                aria-label={`${t.common.viewImage} ${i + 1}`}
+              />
+            ))}
+          </div>
+        </>
       )}
     </div>
   );
@@ -110,7 +142,7 @@ const VideoHero = memo(({ title, subtitle, videoId, fadeTo = "bg-white" }: { tit
   const origin = typeof window !== 'undefined' ? window.location.origin : '';
 
   return (
-    <section className="h-[65vh] md:h-[75vh] relative flex items-center justify-center overflow-hidden bg-black">
+    <section className="h-[52vh] sm:h-[62vh] md:h-[75vh] relative flex items-center justify-center overflow-hidden bg-black">
       <div className="absolute inset-0 w-full h-full pointer-events-none bg-black">
         <iframe
           ref={iframeRef}
@@ -122,19 +154,20 @@ const VideoHero = memo(({ title, subtitle, videoId, fadeTo = "bg-white" }: { tit
         ></iframe>
       </div>
       
-      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-transparent to-black/30" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-black/60" />
       
-      <div className="relative text-center px-6 z-10 animate-reveal max-w-4xl">
-        <div className="w-12 h-1 bg-[#CBA76B] mx-auto mb-8 rounded-full shadow-lg"></div>
-        <h1 className="text-4xl md:text-7xl font-black text-white mb-6 drop-shadow-[0_8px_40px_rgba(0,0,0,0.6)] tracking-tighter uppercase leading-[0.9]">
+      <div className="relative text-center px-5 sm:px-6 z-10 animate-reveal max-w-4xl">
+        <h1 className="text-3xl sm:text-5xl md:text-7xl font-black text-white mb-3 sm:mb-6 drop-shadow-[0_8px_40px_rgba(0,0,0,0.6)] tracking-tighter uppercase leading-[0.95]">
           {title}
         </h1>
-        <p className="text-lg md:text-2xl text-white/95 max-w-2xl mx-auto font-light tracking-wide italic leading-relaxed drop-shadow-lg">
-          {subtitle}
-        </p>
+        {subtitle && (
+          <p className="text-sm sm:text-lg md:text-2xl text-white/95 max-w-2xl mx-auto font-light tracking-wide italic leading-relaxed drop-shadow-lg">
+            {subtitle}
+          </p>
+        )}
       </div>
 
-      <div className={`absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t ${fadeTo === 'bg-white' ? 'from-white' : 'from-slate-50'} via-transparent to-transparent pointer-events-none`} />
+      <div className={`absolute bottom-0 left-0 right-0 h-32 md:h-48 bg-gradient-to-t ${fadeTo === 'bg-white' ? 'from-white' : 'from-slate-50'} via-transparent to-transparent pointer-events-none`} />
     </section>
   );
 });
@@ -144,68 +177,95 @@ const MobileSubpagePreviews = memo(({ t, onNavigate }: { t: TranslationStrings, 
   const previews = [
     { 
       id: 'hospedaje' as View, 
+      badge: t.home.previews.lodging.badge,
+      tag: t.home.previews.lodging.tag,
       title: t.nav.lodging, 
-      desc: "Descansa frente al mar en cabañas y enramadas tradicionales.",
+      desc: t.home.previews.lodging.desc,
+      cta: t.home.previews.lodging.cta,
       img: "https://static.wixstatic.com/media/be13c5_ee83f1d399684f28a09c50de5ed13c61~mv2.jpg" 
     },
     { 
       id: 'restaurante' as View, 
+      badge: t.home.previews.restaurant.badge,
+      tag: t.home.previews.restaurant.tag,
       title: t.nav.restaurant, 
-      desc: "Disfruta de la mejor gastronomía local y pesca fresca del día.",
+      desc: t.home.previews.restaurant.desc,
+      cta: t.home.previews.restaurant.cta,
       img: "https://static.wixstatic.com/media/be13c5_b2ca0fb067644b06a5e49ef05df3f223~mv2.jpg" 
     },
     { 
       id: 'experiencias' as View, 
+      badge: t.home.previews.experiences.badge,
+      tag: t.home.previews.experiences.tag,
       title: t.nav.experiences, 
-      desc: "Explora la magia, el viento y la cultura del Cabo de la Vela.",
+      desc: t.home.previews.experiences.desc,
+      cta: t.home.previews.experiences.cta,
       img: "https://static.wixstatic.com/media/1074d5_2889bf5c122c4fdcb86d3fa3cd0a962a~mv2.jpg" 
     }
   ];
 
   return (
-    <section className="md:hidden py-32 px-6 bg-[#fbf9f4] relative overflow-hidden">
-      {/* Elementos decorativos de fondo más integrados */}
+    <section className="md:hidden py-14 px-5 bg-[#fbf9f4] relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-full opacity-[0.03] pointer-events-none" 
            style={{ backgroundImage: `url('https://www.transparenttextures.com/patterns/sandpaper.png')` }} />
       
-      <div className="absolute top-[-10%] left-[-20%] w-[100%] h-[60%] bg-[#CBA76B]/10 rounded-[40%_60%_70%_30%/40%_50%_60%_40%] blur-[80px] rotate-[-15deg] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-20%] w-[100%] h-[60%] bg-[#1f7a8c]/5 rounded-[60%_40%_30%_70%/50%_40%_30%_60%] blur-[100px] rotate-[15deg] pointer-events-none" />
-      
-      <div className="flex flex-col gap-20 relative z-10">
+      <div className="text-center mb-10 relative z-10">
+        <span className="text-[9px] font-black uppercase tracking-[0.35em] text-[#1f7a8c] inline-block px-3.5 py-1 bg-[#1f7a8c]/10 rounded-full mb-3">
+          {t.home.previewsTag}
+        </span>
+        <h2 className="text-[#0b3b52] font-black text-2xl uppercase tracking-tight">
+          {t.home.previewsTitle}
+        </h2>
+        <div className="w-10 h-0.5 bg-[#CBA76B] mx-auto mt-3 rounded-full" />
+      </div>
+
+      <div className="flex flex-col gap-7 relative z-10">
         {previews.map((item, idx) => (
           <motion.div
             key={item.id}
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 25 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.8, delay: idx * 0.1, ease: [0.21, 0.45, 0.32, 0.9] }}
+            viewport={{ once: true, margin: "-30px" }}
+            transition={{ duration: 0.6, delay: idx * 0.08 }}
             onClick={() => onNavigate(item.id)}
-            className="group cursor-pointer"
+            className="group cursor-pointer bg-white rounded-[2rem] overflow-hidden border border-[#0b3b52]/10 shadow-[0_12px_30px_-8px_rgba(11,59,82,0.12)] active:scale-[0.98] transition-all"
           >
-            <div className="relative aspect-[16/11] rounded-[2.5rem] overflow-hidden mb-8 shadow-[0_30px_60px_-12px_rgba(11,59,82,0.25)] group-active:scale-[0.96] transition-all duration-700">
+            <div className="relative aspect-[16/10] overflow-hidden">
               <img 
                 src={item.img} 
                 alt={item.title} 
-                className="w-full h-full object-cover transition-transform duration-[4s] group-hover:scale-110"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0b3b52]/40 via-transparent to-transparent" />
-              <div className="absolute inset-0 border-[0.5px] border-white/20 rounded-[2.5rem] pointer-events-none" />
-            </div>
-            <div className="px-4">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-10 h-[1.5px] bg-[#CBA76B]/60" />
-                <h3 className="text-[#0b3b52] font-black text-3xl uppercase tracking-tighter leading-none pt-1">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+              
+              <div className="absolute top-4 left-4 flex gap-2">
+                <span className="px-3 py-1 rounded-full bg-white/95 backdrop-blur-md text-[#0b3b52] text-[9px] font-black uppercase tracking-wider shadow-sm">
+                  {item.badge}
+                </span>
+              </div>
+              
+              <div className="absolute bottom-4 left-4 right-4">
+                <span className="text-[10px] text-[#CBA76B] font-black uppercase tracking-widest block mb-1">
+                  {item.tag}
+                </span>
+                <h3 className="text-white font-black text-2xl uppercase tracking-tight leading-none drop-shadow-md">
                   {item.title}
                 </h3>
               </div>
-              <p className="text-slate-600/90 text-base leading-relaxed mb-6 font-light">
+            </div>
+
+            <div className="p-5 flex flex-col gap-4">
+              <p className="text-slate-600 text-sm leading-relaxed font-light">
                 {item.desc}
               </p>
-              <div className="inline-flex items-center gap-3 text-[#1f7a8c] font-black text-[11px] uppercase tracking-[0.25em] group-hover:gap-5 transition-all duration-500 bg-[#1f7a8c]/5 px-5 py-2.5 rounded-full">
-                <span>{item.id === 'hospedaje' ? 'Reservar' : 'Descubrir'}</span>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
+              
+              <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+                <span className="text-[#0b3b52] font-black text-[11px] uppercase tracking-wider">
+                  {item.cta}
+                </span>
+                <span className="w-8 h-8 rounded-full bg-[#1f7a8c] text-white flex items-center justify-center shadow-md group-hover:bg-[#0b3b52] transition-colors">
+                  <ArrowRight size={14} />
+                </span>
               </div>
             </div>
           </motion.div>
@@ -218,7 +278,7 @@ const MobileSubpagePreviews = memo(({ t, onNavigate }: { t: TranslationStrings, 
 // --- VISTA INICIO ---
 const HomeView = memo(({ t, onNavigate }: { t: TranslationStrings, onNavigate: (view: View) => void }) => (
   <div className="view-transition">
-    <section className="h-[95vh] relative flex items-center justify-center overflow-hidden bg-[#0b3b52]">
+    <section className="h-[92vh] sm:h-[95vh] relative flex items-center justify-center overflow-hidden bg-[#0b3b52]">
       <div 
         className="absolute inset-0 bg-cover bg-center animate-slow-zoom"
         style={{ 
@@ -229,11 +289,11 @@ const HomeView = memo(({ t, onNavigate }: { t: TranslationStrings, onNavigate: (
       <div className="absolute inset-0 bg-gradient-to-b from-[#0b3b52]/80 via-transparent to-[#0b3b52]/90" />
       <div className="absolute inset-0 bg-gradient-to-r from-[#0b3b52]/40 via-transparent to-[#0b3b52]/40" />
       
-      <div className="relative text-center px-6 max-w-5xl z-10 animate-reveal">
-        <h1 className="text-4xl md:text-7xl font-black text-white mb-6 drop-shadow-2xl tracking-tight leading-tight uppercase">
+      <div className="relative text-center px-5 sm:px-6 max-w-5xl z-10 animate-reveal">
+        <h1 className="text-3xl sm:text-5xl md:text-7xl font-black text-white mb-4 sm:mb-6 drop-shadow-2xl tracking-tight leading-tight uppercase">
           {t.hero.title}
         </h1>
-        <p className="text-base md:text-xl text-white/95 mb-10 max-w-2xl mx-auto font-medium leading-relaxed drop-shadow-lg">
+        <p className="text-sm sm:text-base md:text-xl text-white/95 mb-8 sm:mb-10 max-w-2xl mx-auto font-medium leading-relaxed drop-shadow-lg">
           {t.hero.subtitle}
         </p>
         <div className="flex justify-center">
@@ -241,28 +301,28 @@ const HomeView = memo(({ t, onNavigate }: { t: TranslationStrings, onNavigate: (
             href="https://wa.me/573126306637"
             target="_blank"
             rel="noopener noreferrer"
-            className="px-12 py-4 bg-[#1f7a8c] text-white text-sm font-extrabold rounded-2xl shadow-2xl hover:bg-[#2692a8] transform transition-all hover:-translate-y-1 active:scale-95 uppercase tracking-[0.2em] border border-[#1f7a8c80]"
+            className="px-8 sm:px-12 py-3.5 sm:py-4 bg-[#1f7a8c] text-white text-xs sm:text-sm font-extrabold rounded-2xl shadow-2xl hover:bg-[#2692a8] transform transition-all hover:-translate-y-1 active:scale-95 uppercase tracking-[0.2em] border border-[#1f7a8c80]"
           >
             {t.hero.cta}
           </a>
         </div>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-24 sm:h-32 bg-gradient-to-t from-white to-transparent" />
     </section>
     
-    <section className="py-24 px-6 bg-white">
+    <section className="py-14 sm:py-20 md:py-24 px-5 sm:px-6 bg-white">
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-10">
+        <div className="text-center mb-6 sm:mb-10">
           <span className="inline-block px-4 py-1.5 bg-[#f7f0e3] text-[#0b3b52] rounded-full text-[10px] font-black uppercase tracking-[0.3em]">
             {t.home.welcomeTag}
           </span>
         </div>
         <div className="text-center md:text-left">
-          <p className="text-[#0b3b52] leading-[1.8] text-lg md:text-2xl font-light italic">
+          <p className="text-[#0b3b52] leading-[1.8] text-base sm:text-lg md:text-2xl font-light italic">
             {t.home.quote}
           </p>
-          <div className="mt-12 w-20 h-1 bg-[#1f7a8c]/20 rounded-full mx-auto md:mx-0"></div>
+          <div className="mt-8 sm:mt-12 w-16 sm:w-20 h-1 bg-[#1f7a8c]/20 rounded-full mx-auto md:mx-0"></div>
         </div>
       </div>
     </section>
@@ -279,12 +339,12 @@ const LodgingView = memo(({ t }: { t: TranslationStrings }) => (
       subtitle={t.lodging.subtitle} 
       videoId="CwqsLegjJrE"
     />
-    <section className="py-16 px-6 bg-white">
+    <section className="py-12 sm:py-16 px-4 sm:px-6 bg-white">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-16 max-w-3xl mx-auto animate-reveal">
-           <p className="text-slate-700 leading-relaxed text-lg font-light italic text-center md:text-left whitespace-pre-line">{t.lodging.lead}</p>
+        <div className="mb-12 sm:mb-16 max-w-3xl mx-auto animate-reveal px-2">
+           <p className="text-slate-700 leading-relaxed text-base sm:text-lg font-light italic text-center md:text-left whitespace-pre-line">{t.lodging.lead}</p>
         </div>
-        <div className="flex flex-col gap-16 lg:gap-24">
+        <div className="flex flex-col gap-10 sm:gap-16 lg:gap-24">
           {[
             { ...t.lodging.rooms.double, images: [
               "https://static.wixstatic.com/media/1074d5_dbe55e4ddd604ea4b9e39205f4bbd0f3~mv2.jpg",
@@ -300,26 +360,26 @@ const LodgingView = memo(({ t }: { t: TranslationStrings }) => (
           ].map((room, i) => (
             <div 
               key={i} 
-              className={`group overflow-hidden rounded-[3rem] bg-slate-50 border border-slate-100 transition-all hover:shadow-2xl animate-reveal stagger-1 max-w-5xl w-full flex flex-col md:flex-row
+              className={`group overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] md:rounded-[3rem] bg-slate-50 border border-slate-100 transition-all hover:shadow-2xl animate-reveal stagger-1 max-w-5xl w-full flex flex-col md:flex-row
                 ${i % 2 === 0 ? 'lg:mr-auto' : 'lg:ml-auto md:flex-row-reverse'}
               `}
             >
-              <div className="relative h-72 md:h-auto md:w-1/2 overflow-hidden">
-                <RoomCarousel images={room.images} title={room.title} />
+              <div className="relative h-64 sm:h-72 md:h-auto md:w-1/2 overflow-hidden shrink-0">
+                <RoomCarousel images={room.images} title={room.title} t={t} />
               </div>
-              <div className="p-8 md:p-12 md:w-1/2 flex flex-col justify-center">
-                <h3 className="text-2xl md:text-3xl font-black text-[#0b3b52] mb-4">{room.title}</h3>
-                <p className="text-slate-600 leading-relaxed text-base md:text-lg font-light mb-6">{room.desc}</p>
+              <div className="p-6 sm:p-8 md:p-12 md:w-1/2 flex flex-col justify-center">
+                <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-[#0b3b52] mb-3">{room.title}</h3>
+                <p className="text-slate-600 leading-relaxed text-sm sm:text-base md:text-lg font-light mb-5">{room.desc}</p>
                 
                 {room.includes && (
-                  <div className="mt-2 pt-6 border-t border-slate-200">
-                    <h4 className="text-[#1f7a8c] font-black text-[10px] tracking-[0.2em] uppercase mb-4">
+                  <div className="mt-2 pt-5 border-t border-slate-200">
+                    <h4 className="text-[#1f7a8c] font-black text-[10px] tracking-[0.2em] uppercase mb-3">
                       {room.includesTitle}
                     </h4>
                     <ul className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4">
                       {room.includes.map((item, idx) => (
-                        <li key={idx} className="flex items-start gap-2 text-slate-500 text-sm">
-                          <span className="text-[#CBA76B] mt-1 shrink-0">•</span>
+                        <li key={idx} className="flex items-start gap-2 text-slate-500 text-xs sm:text-sm">
+                          <span className="text-[#CBA76B] mt-0.5 shrink-0">•</span>
                           <span>{item}</span>
                         </li>
                       ))}
@@ -327,12 +387,12 @@ const LodgingView = memo(({ t }: { t: TranslationStrings }) => (
                   </div>
                 )}
                 
-                <div className="mt-10 flex justify-center md:justify-start">
+                <div className="mt-8 sm:mt-10 flex justify-center md:justify-start">
                   <a 
                     href="https://wa.me/573126306637"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center px-10 py-4 bg-[#0b3b52] text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl shadow-[0_15px_35px_-10px_rgba(11,59,82,0.4)] hover:bg-[#1f7a8c] transition-all transform hover:-translate-y-0.5 active:scale-95"
+                    className="w-full sm:w-auto inline-flex items-center justify-center px-8 sm:px-10 py-3.5 sm:py-4 bg-[#0b3b52] text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl shadow-[0_15px_35px_-10px_rgba(11,59,82,0.4)] hover:bg-[#1f7a8c] transition-all transform hover:-translate-y-0.5 active:scale-95"
                   >
                     <span>{t.lodging.reserve}</span>
                   </a>
@@ -363,28 +423,28 @@ const RestaurantView = memo(({ t }: { t: TranslationStrings }) => {
         fadeTo="bg-[#f7f0e3]"
       />
       
-      <section className="py-16 md:py-24 px-6 bg-[#f7f0e3]">
-        <div className="max-w-4xl mx-auto animate-reveal mb-16 md:mb-24">
+      <section className="py-12 sm:py-16 md:py-24 px-5 sm:px-6 bg-[#f7f0e3]">
+        <div className="max-w-4xl mx-auto animate-reveal mb-12 sm:mb-16 md:mb-24">
           <div className="flex flex-col items-center text-center">
-            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#1f7a8c] mb-8 inline-block px-4 py-1.5 bg-[#1f7a8c]/5 rounded-full">
+            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#1f7a8c] mb-6 sm:mb-8 inline-block px-4 py-1.5 bg-[#1f7a8c]/5 rounded-full">
               {t.restaurant.tag}
             </span>
-            <p className="text-[#0b3b52] leading-relaxed text-xl md:text-3xl font-light italic">
+            <p className="text-[#0b3b52] leading-relaxed text-lg sm:text-xl md:text-3xl font-light italic">
               "{t.restaurant.desc}"
             </p>
           </div>
         </div>
 
-        <div className="max-w-6xl mx-auto flex flex-col gap-12 md:gap-32">
+        <div className="max-w-6xl mx-auto flex flex-col gap-10 sm:gap-16 md:gap-32">
           {sections.map((section, i) => (
             <div 
               key={i} 
-              className={`flex flex-col md:flex-row items-center gap-8 md:gap-16 group
+              className={`flex flex-col md:flex-row items-center gap-6 sm:gap-8 md:gap-16 group
                 ${i % 2 === 0 ? '' : 'md:flex-row-reverse'}
               `}
             >
               {/* Contenedor de Imagen */}
-              <div className="w-full md:w-1/2 overflow-hidden rounded-[2.5rem] shadow-2xl relative aspect-[4/3] md:aspect-[3/2]">
+              <div className="w-full md:w-1/2 overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] shadow-xl sm:shadow-2xl relative aspect-[16/10] sm:aspect-[4/3] md:aspect-[3/2]">
                 <img 
                   src={section.img} 
                   alt={section.title}
@@ -394,14 +454,14 @@ const RestaurantView = memo(({ t }: { t: TranslationStrings }) => {
               </div>
 
               {/* Contenedor de Texto */}
-              <div className="w-full md:w-1/2 flex flex-col justify-center animate-reveal">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-8 h-[2px] bg-[#CBA76B]" />
-                  <h3 className="text-[#0b3b52] font-black text-3xl md:text-5xl uppercase tracking-tighter leading-none pt-2">
+              <div className="w-full md:w-1/2 flex flex-col justify-center animate-reveal px-2 sm:px-0">
+                <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+                  <div className="w-6 sm:w-8 h-[2px] bg-[#CBA76B]" />
+                  <h3 className="text-[#0b3b52] font-black text-2xl sm:text-3xl md:text-5xl uppercase tracking-tighter leading-none pt-1 sm:pt-2">
                     {section.title}
                   </h3>
                 </div>
-                <p className="text-slate-600 text-lg md:text-xl leading-relaxed font-light mt-4">
+                <p className="text-slate-600 text-sm sm:text-base md:text-xl leading-relaxed font-light mt-2 sm:mt-4">
                   {section.desc}
                 </p>
               </div>
@@ -431,35 +491,35 @@ const ExperiencesView = memo(({ t, onSelectExp }: { t: TranslationStrings; onSel
         videoId="2nTitFsp148"
         fadeTo="bg-slate-50"
       />
-      <section className="py-12 px-6 bg-slate-50 text-center md:text-left animate-reveal">
+      <section className="py-10 sm:py-12 px-5 sm:px-6 bg-slate-50 text-center md:text-left animate-reveal">
         <div className="max-w-4xl mx-auto">
-          <p className="text-slate-700 leading-relaxed text-lg md:text-xl font-light italic mb-8 whitespace-pre-line text-center md:text-left">
+          <p className="text-slate-700 leading-relaxed text-base sm:text-lg md:text-xl font-light italic mb-6 sm:mb-8 whitespace-pre-line text-center md:text-left">
             {t.experiences.lead}
           </p>
           <div className="flex flex-col items-center gap-4">
-            <button className="px-8 py-3 bg-[#CBA76B] text-[#0b3b52] text-xs font-black uppercase tracking-[0.2em] rounded-xl shadow-lg cursor-default">
+            <button className="px-7 sm:px-8 py-3 bg-[#CBA76B] text-[#0b3b52] text-[11px] sm:text-xs font-black uppercase tracking-[0.2em] rounded-xl shadow-lg cursor-default">
               {t.experiences.ctaButton}
             </button>
             <motion.div 
-              animate={{ y: [0, 10, 0] }}
+              animate={{ y: [0, 8, 0] }}
               transition={{ duration: 2, repeat: Infinity }}
               className="text-[#CBA76B]"
             >
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
               </svg>
             </motion.div>
           </div>
         </div>
       </section>
-      <section className="py-24 px-6 bg-slate-50 overflow-hidden">
+      <section className="py-12 sm:py-24 px-5 sm:px-6 bg-slate-50 overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {experiences.map((item, i) => (
               <div 
                 key={i} 
                 onClick={() => onSelectExp({ ...item, index: i })}
-                className={`group relative h-[420px] rounded-[3rem] overflow-hidden bg-slate-200 animate-reveal stagger-${i+1} shadow-lg cursor-pointer`}
+                className={`group relative h-[340px] sm:h-[400px] md:h-[420px] rounded-[2rem] sm:rounded-[2.5rem] md:rounded-[3rem] overflow-hidden bg-slate-200 animate-reveal stagger-${i+1} shadow-lg cursor-pointer active:scale-[0.98] transition-all`}
               >
                 <div className="absolute inset-0 bg-slate-200 animate-pulse" />
                 <img 
@@ -470,11 +530,11 @@ const ExperiencesView = memo(({ t, onSelectExp }: { t: TranslationStrings; onSel
                   alt={item.title}
                   onLoad={(e) => (e.currentTarget.previousElementSibling as HTMLElement).style.display = 'none'}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 z-20" />
-                <div className="absolute bottom-0 left-0 right-0 p-10 z-30">
-                  <p className="text-white font-black text-2xl tracking-tighter uppercase">{item.title}</p>
-                  <div className="mt-4 flex items-center gap-2 text-[#CBA76B] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <span className="text-[10px] font-black uppercase tracking-widest">Ver más</span>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-80 z-20" />
+                <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10 z-30">
+                  <p className="text-white font-black text-xl sm:text-2xl tracking-tighter uppercase">{item.title}</p>
+                  <div className="mt-3 sm:mt-4 flex items-center gap-2 text-[#CBA76B] opacity-90 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
+                    <span className="text-[10px] font-black uppercase tracking-widest">{t.experiences.viewMore}</span>
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
                   </div>
                 </div>
@@ -489,59 +549,58 @@ const ExperiencesView = memo(({ t, onSelectExp }: { t: TranslationStrings; onSel
 
 // --- VISTA NOSOTROS ---
 const LegalView = memo(({ t }: { t: TranslationStrings }) => (
-  <div className="view-transition pt-32 pb-24 px-6 bg-[#fdfbf7]">
+  <div className="view-transition pt-24 sm:pt-32 pb-16 sm:pb-24 px-5 sm:px-6 bg-[#fdfbf7]">
     <div className="max-w-4xl mx-auto">
-      <div className="mb-16 animate-reveal text-center md:text-left">
-        <span className="text-[#1f7a8c] font-black text-[10px] tracking-[0.5em] uppercase mb-4 block text-center">{t.aboutUs.tag}</span>
-        <h1 className="text-4xl md:text-6xl font-black text-[#0b3b52] uppercase tracking-tighter leading-none text-center md:text-left">{t.aboutUs.title}</h1>
-        <div className="mt-6 w-12 h-1 bg-[#CBA76B] rounded-full mx-auto md:mx-0"></div>
+      <div className="mb-12 sm:mb-16 animate-reveal text-center md:text-left">
+        <span className="text-[#1f7a8c] font-black text-[10px] tracking-[0.5em] uppercase mb-3 sm:mb-4 block text-center md:text-left">{t.aboutUs.tag}</span>
+        <h1 className="text-3xl sm:text-4xl md:text-6xl font-black text-[#0b3b52] uppercase tracking-tighter leading-none text-center md:text-left">{t.aboutUs.title}</h1>
       </div>
       
-      <div className="mb-24 animate-reveal stagger-1">
-        <div className="bg-white p-10 md:p-16 rounded-[2.5rem] shadow-xl shadow-slate-200/40 border border-slate-100 text-center md:text-left">
-          <h2 className="text-2xl md:text-3xl font-black text-[#0b3b52] uppercase tracking-tight mb-8">
+      <div className="mb-14 sm:mb-24 animate-reveal stagger-1">
+        <div className="bg-white p-6 sm:p-10 md:p-16 rounded-[2rem] sm:rounded-[2.5rem] shadow-xl shadow-slate-200/40 border border-slate-100 text-center md:text-left">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-[#0b3b52] uppercase tracking-tight mb-6 sm:mb-8">
             {t.aboutUs.whoTitle}
           </h2>
-          <div className="space-y-6 text-slate-600 font-light leading-relaxed text-lg max-w-2xl mx-auto md:mx-0">
+          <div className="space-y-5 sm:space-y-6 text-slate-600 font-light leading-relaxed text-base sm:text-lg max-w-2xl mx-auto md:mx-0">
             <p>{t.aboutUs.whoP1}</p>
             <p>{t.aboutUs.whoP2}</p>
           </div>
-          <div className="mt-12 pt-10 border-t border-slate-50">
-            <p className="italic text-[#1f7a8c] font-medium text-xl leading-relaxed max-w-xl mx-auto md:mx-0">
+          <div className="mt-8 sm:mt-12 pt-6 sm:pt-10 border-t border-slate-50">
+            <p className="italic text-[#1f7a8c] font-medium text-lg sm:text-xl leading-relaxed max-w-xl mx-auto md:mx-0">
               {t.aboutUs.whoQuote}
             </p>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-24 animate-reveal stagger-2">
-        <div className="bg-[#0b3b52] p-10 rounded-[2rem] text-white shadow-lg transition-transform hover:-translate-y-1">
-          <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mb-14 sm:mb-24 animate-reveal stagger-2">
+        <div className="bg-[#0b3b52] p-6 sm:p-10 rounded-[2rem] text-white shadow-lg transition-transform hover:-translate-y-1">
+          <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center mb-5 sm:mb-6">
             <svg className="w-5 h-5 text-[#CBA76B]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
           </div>
-          <h3 className="text-xl font-black uppercase tracking-tight mb-4">{t.aboutUs.missionTitle}</h3>
-          <p className="text-white/70 font-light leading-relaxed text-base">
+          <h3 className="text-lg sm:text-xl font-black uppercase tracking-tight mb-3 sm:mb-4">{t.aboutUs.missionTitle}</h3>
+          <p className="text-white/70 font-light leading-relaxed text-sm sm:text-base">
             {t.aboutUs.missionDesc}
           </p>
         </div>
 
-        <div className="bg-white p-10 rounded-[2rem] border border-slate-100 shadow-lg transition-transform hover:-translate-y-1">
-          <div className="w-10 h-10 bg-[#f7f0e3] rounded-xl flex items-center justify-center mb-6">
+        <div className="bg-white p-6 sm:p-10 rounded-[2rem] border border-slate-100 shadow-lg transition-transform hover:-translate-y-1">
+          <div className="w-10 h-10 bg-[#f7f0e3] rounded-xl flex items-center justify-center mb-5 sm:mb-6">
             <svg className="w-5 h-5 text-[#1f7a8c]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
           </div>
-          <h3 className="text-xl font-black text-[#0b3b52] uppercase tracking-tight mb-4">{t.aboutUs.visionTitle}</h3>
-          <p className="text-slate-500 font-light leading-relaxed text-base">
+          <h3 className="text-lg sm:text-xl font-black text-[#0b3b52] uppercase tracking-tight mb-3 sm:mb-4">{t.aboutUs.visionTitle}</h3>
+          <p className="text-slate-500 font-light leading-relaxed text-sm sm:text-base">
             {t.aboutUs.visionDesc}
           </p>
         </div>
       </div>
 
       <div className="animate-reveal stagger-3">
-        <div className="text-center md:text-left mb-10">
-           <h3 className="text-2xl font-black text-[#0b3b52] uppercase tracking-tight">{t.aboutUs.valuesTitle}</h3>
-           <p className="text-slate-400 text-[10px] mt-2 font-bold tracking-[0.3em] uppercase">{t.aboutUs.valuesSubtitle}</p>
+        <div className="text-center md:text-left mb-8 sm:mb-10">
+           <h3 className="text-xl sm:text-2xl font-black text-[#0b3b52] uppercase tracking-tight">{t.aboutUs.valuesTitle}</h3>
+           <p className="text-slate-400 text-[9px] sm:text-[10px] mt-1.5 font-bold tracking-[0.3em] uppercase">{t.aboutUs.valuesSubtitle}</p>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
           {[
             t.aboutUs.values.integrity,
             t.aboutUs.values.honesty,
@@ -549,10 +608,10 @@ const LegalView = memo(({ t }: { t: TranslationStrings }) => (
             t.aboutUs.values.commitment,
             t.aboutUs.values.quality
           ].map((v, i) => (
-            <div key={i} className="bg-white px-4 py-8 rounded-3xl border border-slate-100 text-center flex flex-col items-center shadow-sm hover:shadow-md transition-all hover:bg-slate-50">
-              <div className="w-1.5 h-1.5 bg-[#CBA76B] rounded-full mb-4"></div>
-              <h4 className="text-[10px] font-black text-[#0b3b52] uppercase tracking-widest mb-2">{v.n}</h4>
-              <p className="text-[8px] text-slate-400 font-bold leading-tight uppercase tracking-tighter">{v.d}</p>
+            <div key={i} className="bg-white p-5 sm:px-4 sm:py-8 rounded-2xl sm:rounded-3xl border border-slate-100 text-center flex flex-col items-center shadow-sm hover:shadow-md transition-all hover:bg-slate-50">
+              <div className="w-1.5 h-1.5 bg-[#CBA76B] rounded-full mb-3 sm:mb-4"></div>
+              <h4 className="text-[10px] sm:text-[11px] font-black text-[#0b3b52] uppercase tracking-widest mb-1.5">{v.n}</h4>
+              <p className="text-[9px] text-slate-400 font-medium leading-tight">{v.d}</p>
             </div>
           ))}
         </div>
@@ -561,53 +620,13 @@ const LegalView = memo(({ t }: { t: TranslationStrings }) => (
   </div>
 ));
 
-// --- COMPONENTE BOTÓN FLOTANTE MINIMALISTA ---
-const MobileFAB = memo(() => {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      // Aparece después de 400px de scroll
-      setIsVisible(window.scrollY > 400);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.div
-          initial={{ opacity: 0, y: 20, x: '-50%' }}
-          animate={{ opacity: 1, y: 0, x: '-50%' }}
-          exit={{ opacity: 0, y: 20, x: '-50%' }}
-          className="fixed bottom-8 left-1/2 z-[100] md:hidden"
-        >
-          <a
-            href="https://wa.me/573126306637"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-3 px-8 h-14 bg-[#0b3b52] text-white rounded-full shadow-[0_20px_50px_-10px_rgba(11,59,82,0.5)] border border-white/10 active:scale-95 transition-all duration-200"
-          >
-            <span className="font-black uppercase tracking-[0.2em] text-[10px] pt-0.5">Reservar ahora</span>
-            <div className="w-4 h-[1px] bg-white/30" />
-            <svg className="w-4 h-4 text-[#CBA76B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </a>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-});
-
 // --- COMPONENTE BOTÓN SUBIR (SCROLL TO TOP) ---
-const ScrollToTop = memo(() => {
+const ScrollToTop = memo(({ t }: { t: TranslationStrings }) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsVisible(window.scrollY > 600);
+      setIsVisible(window.scrollY > 550);
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
@@ -625,11 +644,11 @@ const ScrollToTop = memo(() => {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.8 }}
           onClick={scrollToTop}
-          className="fixed bottom-28 right-6 z-[100] w-10 h-10 bg-white/90 backdrop-blur-md text-[#0b3b52] rounded-full shadow-xl border border-slate-200 flex items-center justify-center active:scale-90 transition-all md:hidden"
-          aria-label="Subir"
+          className="fixed bottom-6 right-5 z-[79] w-10 h-10 bg-white/95 backdrop-blur-md text-[#0b3b52] rounded-full shadow-lg border border-slate-200 flex items-center justify-center active:scale-90 transition-all md:hidden"
+          aria-label={t.common.scrollToTop}
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 15l7-7 7 7" />
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 15l7-7 7 7" />
           </svg>
         </motion.button>
       )}
@@ -655,9 +674,9 @@ const App: React.FC = () => {
     }
   }, []);
 
-  // Bloqueo de scroll al abrir modal
+  // Bloqueo de scroll al abrir modal o menú móvil
   useEffect(() => {
-    if (selectedExp) {
+    if (selectedExp || isMenuOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
@@ -665,11 +684,14 @@ const App: React.FC = () => {
     return () => {
       document.body.style.overflow = 'unset';
     };
-  }, [selectedExp]);
+  }, [selectedExp, isMenuOpen]);
 
-  // Actualizar el título de la pestaña (al lado del favicon) según la vista
+  // Actualizar el idioma del documento y el título de la pestaña según la vista
   useEffect(() => {
-    const baseTitle = "Apalanchii – Cabo de la Vela";
+    document.documentElement.lang = lang;
+    const baseTitle = lang === 'en'
+      ? "Apalanchii – Cabo de la Vela | Lodging & Restaurant"
+      : "Apalanchii – Cabo de la Vela | Hospedaje y Restaurante";
     if (currentView === 'inicio') {
       document.title = baseTitle;
     } else {
@@ -681,7 +703,7 @@ const App: React.FC = () => {
       };
       document.title = `${viewLabels[currentView]} | ${baseTitle}`;
     }
-  }, [currentView, t]);
+  }, [currentView, t, lang]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -707,7 +729,10 @@ const App: React.FC = () => {
   }, []);
 
   const changeView = useCallback((v: View) => {
-    if (v === currentView) return;
+    if (v === currentView) {
+      setIsMenuOpen(false);
+      return;
+    }
     setCurrentView(v);
     setIsMenuOpen(false);
     window.scrollTo({ top: 0, behavior: 'auto' });
@@ -725,14 +750,14 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-white flex flex-col font-sans overflow-x-hidden">
       <header className={`fixed top-0 left-0 right-0 z-50 glass-header ${
-        isTransparentHeader ? 'bg-transparent py-5' : 'bg-white/90 shadow-md py-2.5'
+        isTransparentHeader ? 'bg-transparent py-4 sm:py-5' : 'bg-white/90 shadow-md py-2.5'
       }`}>
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-          <button onClick={() => changeView('inicio')} className="active:scale-95 transition-transform">
+        <div className="max-w-7xl mx-auto px-5 sm:px-6 flex items-center justify-between">
+          <button onClick={() => changeView('inicio')} className="active:scale-95 transition-transform flex items-center">
             <img 
               src="https://static.wixstatic.com/media/be13c5_abf5374c2bc448dda014a47f245f7cbc~mv2.png" 
               alt="Apalanchii" 
-              className="h-7 md:h-8 w-auto transition-all" 
+              className="h-6 sm:h-7 md:h-8 w-auto transition-all" 
             />
           </button>
           
@@ -752,44 +777,117 @@ const App: React.FC = () => {
             ))}
           </nav>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
             <LanguageToggle current={lang} onToggle={setLang} dark={isTransparentHeader} />
             <button 
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className={`md:hidden p-2 transition-colors ${
-                isTransparentHeader ? 'text-white' : 'text-[#0b3b52]'
+              className={`md:hidden p-2 rounded-xl active:scale-90 transition-all ${
+                isTransparentHeader 
+                  ? 'text-white bg-black/20 backdrop-blur-sm' 
+                  : 'text-[#0b3b52] bg-slate-100'
               }`}
+              aria-label={isMenuOpen ? t.common.closeMenu : t.common.openMenu}
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" /></svg>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 6h16M4 12h16m-7 6h7" />
+              </svg>
             </button>
           </div>
         </div>
 
-        {isMenuOpen && (
-          <div className="md:hidden absolute top-full left-0 right-0 bg-white/95 backdrop-blur-xl shadow-2xl animate-reveal p-6 space-y-3">
-            {navItems.map(s => (
-              <button 
-                key={s.id} 
-                onClick={() => changeView(s.id)}
-                className={`block w-full text-left px-5 py-4 rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all ${
-                  currentView === s.id ? 'bg-[#0b3b52] text-white shadow-lg scale-[1.02]' : 'text-[#0b3b52] hover:bg-slate-100'
-                }`}
+        {/* Menú Móvil Elegante */}
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[120] md:hidden"
+            >
+              {/* Overlay oscuro */}
+              <div 
+                className="absolute inset-0 bg-[#0b3b52]/80 backdrop-blur-md"
+                onClick={() => setIsMenuOpen(false)}
+              />
+
+              {/* Panel de navegación */}
+              <motion.div 
+                initial={{ y: -20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: -20, opacity: 0 }}
+                transition={{ duration: 0.25, ease: 'easeOut' }}
+                className="relative bg-white shadow-2xl rounded-b-[2rem] p-6 pt-5 pb-8 border-b border-slate-100"
               >
-                {s.label}
-              </button>
-            ))}
-            <div className="pt-4 border-t border-slate-100">
-              <button 
-                onClick={() => changeView('legal')}
-                className={`block w-full text-left px-5 py-4 rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all ${
-                  currentView === 'legal' ? 'bg-[#CBA76B] text-[#0b3b52]' : 'text-slate-400 hover:text-[#0b3b52] hover:bg-slate-50'
-                }`}
-              >
-                {t.nav.about}
-              </button>
-            </div>
-          </div>
-        )}
+                <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
+                  <div className="flex items-center gap-2">
+                    <img 
+                      src="https://static.wixstatic.com/media/be13c5_abf5374c2bc448dda014a47f245f7cbc~mv2.png" 
+                      alt="Apalanchii" 
+                      className="h-6 w-auto" 
+                    />
+                  </div>
+                  <button 
+                    onClick={() => setIsMenuOpen(false)}
+                    className="p-2 rounded-full bg-slate-100 text-[#0b3b52] active:scale-90 transition-transform"
+                    aria-label={t.common.closeMenu}
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+
+                <div className="space-y-2">
+                  {navItems.map(s => (
+                    <button 
+                      key={s.id} 
+                      onClick={() => changeView(s.id)}
+                      className={`flex items-center justify-between w-full px-5 py-3.5 rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all active:scale-[0.98] ${
+                        currentView === s.id 
+                          ? 'bg-[#0b3b52] text-white shadow-md' 
+                          : 'text-[#0b3b52] hover:bg-slate-50'
+                      }`}
+                    >
+                      <span>{s.label}</span>
+                      {currentView === s.id && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#CBA76B]" />
+                      )}
+                    </button>
+                  ))}
+                  
+                  <div className="pt-2">
+                    <button 
+                      onClick={() => changeView('legal')}
+                      className={`flex items-center justify-between w-full px-5 py-3.5 rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all active:scale-[0.98] ${
+                        currentView === 'legal' 
+                          ? 'bg-[#CBA76B] text-[#0b3b52]' 
+                          : 'text-slate-500 hover:bg-slate-50'
+                      }`}
+                    >
+                      <span>{t.nav.about}</span>
+                      {currentView === 'legal' && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#0b3b52]" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="mt-6 pt-5 border-t border-slate-100 flex flex-col gap-3">
+                  <a
+                    href="https://wa.me/573126306637"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 w-full py-3.5 bg-[#1f7a8c] text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-xl shadow-md active:scale-95 transition-transform"
+                  >
+                    <span>{t.hero.cta}</span>
+                    <ArrowRight size={13} />
+                  </a>
+                  <p className="text-center text-[9px] text-slate-400 font-bold uppercase tracking-widest">
+                    Cabo de la Vela, La Guajira
+                  </p>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       <main className="flex-1">
@@ -905,16 +1003,22 @@ const App: React.FC = () => {
                     {t.experiences.mapTitle}
                   </h4>
                 </div>
-                <div className="w-full h-32 rounded-2xl overflow-hidden relative border border-white/10 shadow-lg bg-slate-100 block group hover:border-[#CBA76B]/40 transition-all duration-300 transform hover:scale-[1.02]">
+                <div className="w-full h-32 rounded-2xl overflow-hidden relative border border-white/10 shadow-lg bg-slate-900 block group hover:border-[#CBA76B]/40 transition-all duration-300 transform hover:scale-[1.02]">
                   <iframe
                     title="Apalanchii Footer Map"
-                    src="https://maps.google.com/maps?q=Apalanchii%2C%20Cabo%20de%20la%20Vela&t=&z=14&ie=UTF8&iwloc=&output=embed"
+                    src="https://maps.google.com/maps?q=Apalanchii%2C%20Cabo%20de%20la%20Vela&t=k&z=15&ie=UTF8&iwloc=&output=embed"
                     className="absolute inset-0 w-full h-full border-0 pointer-events-none"
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
                   ></iframe>
-                  {/* Capa total transparente que captura el click y bloquea la interacción con el iframe */}
-                  <div className="absolute inset-0 bg-[#0b3b52]/0 group-hover:bg-[#0b3b52]/5 transition-all duration-300 flex items-center justify-center z-10">
+                  {/* Etiqueta flotante indicadora de vista satelital */}
+                  <div className="absolute top-2.5 right-2.5 z-10 pointer-events-none">
+                    <span className="px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-sm text-white/90 text-[8px] font-black uppercase tracking-widest border border-white/15 shadow-sm">
+                      {t.experiences.mapSatellite}
+                    </span>
+                  </div>
+                  {/* Capa total que muestra el botón interactivo al hacer hover */}
+                  <div className="absolute inset-0 bg-[#0b3b52]/0 group-hover:bg-[#0b3b52]/10 transition-all duration-300 flex items-center justify-center z-10">
                     <div className="bg-white/95 backdrop-blur-sm text-[#0b3b52] px-3.5 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider shadow-md flex items-center gap-1.5 border border-slate-100 transform translate-y-2 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
                       <svg className="w-3 h-3 text-[#1f7a8c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -925,7 +1029,7 @@ const App: React.FC = () => {
                   </div>
                   {/* Enlace absoluto sobre todo el bloque para garantizar redirección sin interferencia */}
                   <a
-                    href="https://www.google.com/maps/search/?api=1&query=Apalanchii%2C%20Cabo%20de%20la%20Vela"
+                    href="https://www.google.com/maps/search/?api=1&query=Apalanchii%2C%20Cabo%20de%20la%20Vela&basemap=satellite"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="absolute inset-0 z-20 cursor-pointer"
@@ -947,7 +1051,7 @@ const App: React.FC = () => {
 
       <AnimatePresence>
         {selectedExp && (
-          <div className="fixed inset-0 z-[300] flex items-center justify-center md:p-6">
+          <div className="fixed inset-0 z-[300] flex items-center justify-center p-3 sm:p-6">
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -957,26 +1061,26 @@ const App: React.FC = () => {
             />
             
             <motion.div 
-              initial={{ opacity: 0, scale: 0.8, y: 40 }}
+              initial={{ opacity: 0, scale: 0.9, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.8, y: 40, transition: { duration: 0.2, ease: "easeIn" } }}
+              exit={{ opacity: 0, scale: 0.9, y: 30, transition: { duration: 0.2, ease: "easeIn" } }}
               transition={{ 
                 type: 'spring', 
-                damping: 25, 
-                stiffness: 300,
+                damping: 26, 
+                stiffness: 320,
                 mass: 0.5
               }}
-              className="relative bg-white w-full md:max-w-5xl md:rounded-[3rem] overflow-hidden shadow-2xl flex flex-col md:flex-row h-full md:h-auto md:max-h-[85vh] z-50"
+              className="relative bg-white w-full max-w-lg md:max-w-5xl rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[90vh] md:max-h-[85vh] z-50"
             >
               <button 
                 onClick={() => setSelectedExp(null)}
-                className="absolute top-safe-top mt-6 right-6 z-50 p-3 bg-black/20 backdrop-blur-md rounded-full text-white hover:bg-white hover:text-[#0b3b52] transition-all shadow-xl md:bg-white/10"
-                aria-label="Cerrar"
+                className="absolute top-4 right-4 z-50 p-2.5 sm:p-3 bg-black/40 md:bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white hover:text-[#0b3b52] transition-all shadow-xl active:scale-90"
+                aria-label={t.common.close}
               >
-                <X size={24} />
+                <X size={20} />
               </button>
 
-              <div className="w-full md:w-3/5 h-[40vh] sm:h-[50vh] md:h-auto relative overflow-hidden shrink-0">
+              <div className="w-full md:w-3/5 h-[32vh] sm:h-[40vh] md:h-auto relative overflow-hidden shrink-0">
                 <img 
                   src={selectedExp.img} 
                   className="w-full h-full object-cover" 
@@ -985,25 +1089,36 @@ const App: React.FC = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent md:hidden" />
               </div>
 
-              <div className="w-full md:w-2/5 p-8 sm:p-10 md:p-12 flex flex-col bg-white overflow-y-auto">
+              <div className="w-full md:w-2/5 p-6 sm:p-8 md:p-12 flex flex-col bg-white overflow-y-auto">
                 <div>
-                  <span className="text-[#1f7a8c] font-black text-[10px] tracking-[0.4em] uppercase mb-4 block">
+                  <span className="text-[#1f7a8c] font-black text-[10px] tracking-[0.4em] uppercase mb-3 sm:mb-4 block">
                     {t.experiences.tag}
                   </span>
-                  <h2 className="text-3xl md:text-5xl font-black text-[#0b3b52] uppercase tracking-tighter leading-none mb-6">
+                  <h2 className="text-2xl sm:text-3xl md:text-5xl font-black text-[#0b3b52] uppercase tracking-tighter leading-none mb-4 sm:mb-6">
                     {selectedExp.title}
                   </h2>
-                  <div className="w-12 h-1.5 bg-[#CBA76B] mb-8 rounded-full"></div>
-                  <p className="text-slate-600 font-light leading-relaxed text-lg italic mb-10">
+                  <div className="w-12 h-1 bg-[#CBA76B] mb-6 sm:mb-8 rounded-full"></div>
+                  <p className="text-slate-600 font-light leading-relaxed text-sm sm:text-base md:text-lg italic mb-8">
                     {selectedExp.desc}
                   </p>
                   
-                  <button 
-                    onClick={() => setSelectedExp(null)}
-                    className="w-full md:w-auto inline-block px-10 py-5 bg-[#0b3b52] text-white text-[11px] font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-[#1f7a8c] transition-all active:scale-95 shadow-xl"
-                  >
-                    {t.cookie.close}
-                  </button>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <a 
+                      href={`https://wa.me/573126306637?text=${encodeURIComponent(`${t.experiences.bookWhatsAppPrompt}${selectedExp.title}`)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#0b3b52] text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-xl hover:bg-[#1f7a8c] transition-all active:scale-95 shadow-lg text-center"
+                    >
+                      <span>{t.common.reserve}</span>
+                      <ArrowRight size={13} className="text-[#CBA76B]" />
+                    </a>
+                    <button 
+                      onClick={() => setSelectedExp(null)}
+                      className="inline-flex items-center justify-center px-6 py-3.5 bg-slate-100 text-slate-700 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl hover:bg-slate-200 transition-all active:scale-95 text-center"
+                    >
+                      {t.common.close}
+                    </button>
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -1012,7 +1127,7 @@ const App: React.FC = () => {
       </AnimatePresence>
 
       <CookieConsent t={t} />
-      <ScrollToTop />
+      <ScrollToTop t={t} />
     </div>
   );
 };
