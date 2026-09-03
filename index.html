@@ -76,8 +76,10 @@
     });
   </script>
 
-  <!-- Preload de activos críticos -->
-  <link rel="preload" as="image" href="https://static.wixstatic.com/media/be13c5_f5302475844745bf9466dfbe7da3a726~mv2.png" fetchpriority="high">
+  <!-- Preconexión y Preload de recursos críticos -->
+  <link rel="preconnect" href="https://static.wixstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://static.wixstatic.com">
+  <link rel="preload" as="image" href="https://static.wixstatic.com/media/be13c5_abf5374c2bc448dda014a47f245f7cbc~mv2.png" fetchpriority="high">
   <link rel="preload" as="image" href="https://static.wixstatic.com/media/be13c5_5ebe13dd73004d7b8c4c673575b610d3~mv2.jpg" fetchpriority="high">
   
   <script src="https://cdn.tailwindcss.com"></script>
@@ -88,10 +90,8 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  
-  <!-- Google Maps SDK -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCR-rXrcUutOsBstfpWyggR8Jj8WaRBK_8&libraries=places" defer></script>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 
   <style>
     :root {
@@ -158,6 +158,8 @@
     .loaded #loading-screen {
       opacity: 0;
       pointer-events: none;
+      visibility: hidden;
+      transition: opacity 0.15s ease-out, visibility 0.15s;
     }
 
     .animate-reveal {
@@ -255,7 +257,6 @@
     <div class="loader mb-4"></div>
   </div>
   <div id="root"></div>
-  <script type="module" src="./index.tsx"></script>
-<script type="module" src="/index.tsx"></script>
+  <script type="module" src="/index.tsx"></script>
 </body>
 </html>

@@ -63,6 +63,8 @@ const RoomCarousel = memo(({ images, title, t }: { images: string[]; title: stri
           key={index}
           src={images[index]}
           alt={title}
+          loading={index === 0 ? "eager" : "lazy"}
+          decoding="async"
           initial={{ opacity: 0, scale: 1.08 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.96 }}
@@ -234,6 +236,8 @@ const MobileSubpagePreviews = memo(({ t, onNavigate }: { t: TranslationStrings, 
               <img 
                 src={item.img} 
                 alt={item.title} 
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
@@ -448,6 +452,8 @@ const RestaurantView = memo(({ t }: { t: TranslationStrings }) => {
                 <img 
                   src={section.img} 
                   alt={section.title}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover transition-transform duration-[3s] group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-black/10 transition-opacity group-hover:opacity-0" />
@@ -706,9 +712,7 @@ const App: React.FC = () => {
   }, [currentView, t, lang]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      document.body.classList.add('loaded');
-    }, 100);
+    document.body.classList.add('loaded');
     
     let ticking = false;
     const handleScroll = () => {
@@ -724,7 +728,6 @@ const App: React.FC = () => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      clearTimeout(timer);
     };
   }, []);
 
@@ -757,6 +760,10 @@ const App: React.FC = () => {
             <img 
               src="https://static.wixstatic.com/media/be13c5_abf5374c2bc448dda014a47f245f7cbc~mv2.png" 
               alt="Apalanchii" 
+              width="140"
+              height="32"
+              decoding="async"
+              fetchPriority="high"
               className="h-6 sm:h-7 md:h-8 w-auto transition-all" 
             />
           </button>
@@ -823,6 +830,10 @@ const App: React.FC = () => {
                     <img 
                       src="https://static.wixstatic.com/media/be13c5_abf5374c2bc448dda014a47f245f7cbc~mv2.png" 
                       alt="Apalanchii" 
+                      width="120"
+                      height="24"
+                      loading="lazy"
+                      decoding="async"
                       className="h-6 w-auto" 
                     />
                   </div>
@@ -919,6 +930,10 @@ const App: React.FC = () => {
                   <img 
                     src="https://static.wixstatic.com/media/be13c5_abf5374c2bc448dda014a47f245f7cbc~mv2.png" 
                     alt="Apalanchii" 
+                    width="140"
+                    height="40"
+                    loading="lazy"
+                    decoding="async"
                     className="h-10 w-auto drop-shadow-sm" 
                   />
                 </button>
@@ -1083,6 +1098,8 @@ const App: React.FC = () => {
               <div className="w-full md:w-3/5 h-[32vh] sm:h-[40vh] md:h-auto relative overflow-hidden shrink-0">
                 <img 
                   src={selectedExp.img} 
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover" 
                   alt={selectedExp.title} 
                 />
